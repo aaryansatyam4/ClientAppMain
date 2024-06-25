@@ -1,0 +1,23 @@
+stages:
+  - build-stag
+  - deploy-stag
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "staging-gov-nsso-branch"
+build-job:
+  stage: build-stag
+  ####
+  script:
+    - echo "Hola, $GITLAB_USER_LOGIN!"
+deploy-job:
+  stage: deploy-stag
+  ####
+  script:
+    - echo "Hola, $GITLAB_USER_LOGIN!"
+    - ansible-playbook /home/gitlab-runner/builds/f1Sj43ip/0/root/jan.yml
+    - aws configure set region ap-south-1
+    - pushd /home/gitlab-runner/builds/f1Sj43ip/0/root/janparichay-prop/janparichay/
+    - zip -r janparichaystag.zip .
+    - aws s3 cp ./janparichaystag.zip s3://jan-mp-stag
+    - popd
+  when: manual
