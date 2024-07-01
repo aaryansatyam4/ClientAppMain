@@ -23,7 +23,7 @@ public class TaskSubgroupModel implements Serializable {
     @JoinColumn(name = "parent_id")
     private TasksGroupModel parentGroup;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "taskSubgroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TicketsModel> tickets = new HashSet<>();
 
     // Getters and Setters

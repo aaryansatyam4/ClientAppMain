@@ -21,7 +21,7 @@ public class TasksGroupModel implements Serializable {
     private int level;
 
     // One-to-many relationship with TaskSubgroupModel
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskSubgroupModel> subGroups = new HashSet<>();
 
     // Getters and Setters

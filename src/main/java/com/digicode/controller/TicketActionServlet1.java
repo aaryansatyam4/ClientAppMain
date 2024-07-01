@@ -18,13 +18,18 @@ import java.util.Date;
 @WebServlet("/ticketAction")
 public class TicketActionServlet1 extends HttpServlet {
 
+    private static final String COMPLETED_STATUS = "Completed";
+
     private SessionFactory sessionFactory;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        // Initialize Hibernate SessionFactory
-        sessionFactory = new Configuration().configure().buildSessionFactory();
+        try {
+            sessionFactory = new Configuration().configure().buildSessionFactory();
+        } catch (Exception e) {
+            throw new ServletException("Failed to initialize Hibernate SessionFactory", e);
+        }
     }
 
     @Override
@@ -34,56 +39,70 @@ public class TicketActionServlet1 extends HttpServlet {
         String transferTo = req.getParameter("transferTo");
         String remarks = req.getParameter("remarks");
 
-        int ticketId = Integer.parseInt(ticketIdStr);
+        if (ticketIdStr == null || action == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Required parameters are missing");
+            return;
+        }
 
+        try {
+            int ticketId = Integer.parseInt(ticketIdStr);
+            processTicketAction(req, resp, ticketId, action, transferTo, remarks);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid ticket ID");
+        }
+    }
+
+    private void processTicketAction(HttpServletRequest req, HttpServletResponse resp, int ticketId, String action, String transferTo, String remarks) throws IOException {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-
-            // Load the ticket from database
             TicketsModel ticket = (TicketsModel) session.get(TicketsModel.class, ticketId);
 
             if (ticket != null) {
-                if ("completed".equals(action)) {
-                    // Mark ticket as completed
-                    ticket.setStatus("Completed");
-                    ticket.setRemark(remarks); // Optional: Save remarks
-                } else if ("transfer".equals(action)) {
-                    // Transfer ticket to another user
-                    String previousAssignee = ticket.getAssignee(); // get current assignee
-                    ticket.setAssignee(transferTo);
-                    ticket.setRemark(remarks); // Optional: Save remarks
-
-                    // Log the transfer
-                    TicketLogs log = new TicketLogs();
-                    log.setLogData("Ticket transferred from " + previousAssignee + " to " + transferTo);
-                    log.setLogDate(new Date());
-                    log.setCreatedBy(previousAssignee); // Set who transferred
-                    log.setAssignee(transferTo); // Set whom it was transferred to
-                    log.setTicketId(ticket.getId());
-                    session.save(log);
-
-                    // Update transfer count in session attribute
-                    int transferredCount = countTransfersByUser(session, previousAssignee);
-                    req.getSession().setAttribute("transferredCount", transferredCount);
+                if ("completed".equalsIgnoreCase(action)) {
+                    handleCompleteAction(ticket, remarks);
+                } else if ("transfer".equalsIgnoreCase(action)) {
+                    handleTransferAction(session, req, ticket, transferTo, remarks);
                 }
-
-                // Save the updated ticket
                 session.update(ticket);
                 transaction.commit();
+                resp.sendRedirect(req.getContextPath() + "/employee_dashboard.jsp");
+            } else {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Ticket not found");
             }
-
-            // Redirect to employee_dashboard.jsp after processing
-            resp.sendRedirect(req.getContextPath() + "/employee_dashboard.jsp");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing ticket action");
         } finally {
             session.close();
         }
+    }
+
+    private void handleCompleteAction(TicketsModel ticket, String remarks) {
+        ticket.setStatus(COMPLETED_STATUS);
+        ticket.setRemark(remarks);
+    }
+
+    private void handleTransferAction(Session session, HttpServletRequest req, TicketsModel ticket, String transferTo, String remarks) {
+        String previousAssignee = ticket.getAssignee();
+        ticket.setAssignee(transferTo);
+        ticket.setRemark(remarks);
+        ticket.setCheckRead(false);
+
+        TicketLogs log = new TicketLogs();
+        log.setLogData("Ticket transferred from " + previousAssignee + " to " + transferTo);
+        log.setLogDate(new Date());
+        log.setCreatedBy(previousAssignee);
+        log.setAssignee(transferTo);
+        log.setTicket(ticket);
+        session.save(log);
+
+        int transferredCount = countTransfersByUser(session, previousAssignee);
+        req.getSession().setAttribute("transferredCount", transferredCount);
     }
 
     @Override
@@ -94,12 +113,11 @@ public class TicketActionServlet1 extends HttpServlet {
         }
     }
 
-    // Method to count transfers by a specific user
     private int countTransfersByUser(Session session, String assignee) {
         try {
             Long count = (Long) session.createQuery("select count(*) from TicketLogs where createdBy = :assignee")
-                                      .setParameter("assignee", assignee)
-                                      .uniqueResult();
+                    .setParameter("assignee", assignee)
+                    .uniqueResult();
             return count != null ? count.intValue() : 0;
         } catch (Exception e) {
             e.printStackTrace();

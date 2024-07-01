@@ -12,22 +12,30 @@ public class TicketLogs implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int id;
 
+    @Column(name = "log_data")
     private String logData;
+
+    @Column(name = "log_date")
     private Date logDate;
+
+    @Column(name = "created_by")
     private String createdBy;
+
+    @Column(name = "assignee")
     private String assignee;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Many logs to one ticket
-    @JoinColumn(name = "ticket_id", nullable = false, insertable = false, updatable = false) // ticketId column as foreign key
-    private TicketsModel ticket; // Reference to the TicketsModel entity
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id", nullable = false)
+    private TicketsModel ticket;
 
-    @Column(name = "ticket_id", nullable = false)
-    private int ticketId; // Separate field to store the ticket's ID
+    // Constructors
+    public TicketLogs() {
+    }
 
     // Getters and Setters
-
     public int getId() {
         return id;
     }
@@ -66,14 +74,6 @@ public class TicketLogs implements Serializable {
 
     public void setAssignee(String assignee) {
         this.assignee = assignee;
-    }
-
-    public int getTicketId() {
-        return ticketId;
-    }
-
-    public void setTicketId(int ticketId) {
-        this.ticketId = ticketId;
     }
 
     public TicketsModel getTicket() {

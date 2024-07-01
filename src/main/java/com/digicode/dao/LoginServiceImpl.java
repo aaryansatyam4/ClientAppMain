@@ -235,6 +235,52 @@ public int countTransfersByUser(String assignee) {
     }
 }
 
+@SuppressWarnings("unchecked")
+public List<TicketsModel> getUnreadTicketsByAssignee(String assignee) {
+    List<TicketsModel> unreadTickets = new ArrayList<>();
+    try {
+        session = sessionFactory.openSession();
+        transaction = session.beginTransaction();
+        Query query = session.createQuery("from TicketsModel where assignee = :assignee and checkRead = false");
+        query.setParameter("assignee", assignee);
+        unreadTickets = query.list();
+    } catch (HibernateException e) {
+        if (transaction != null) {
+            transaction.rollback();
+        }
+        e.printStackTrace();
+    } finally {
+        if (session != null) {
+            session.close();
+        }
+    }
+    return unreadTickets;
+}
+
+public void markAllTicketsAsRead(String assignee) {
+    try {
+        session = sessionFactory.openSession();
+        transaction = session.beginTransaction();
+        
+        Query query = session.createQuery("update TicketsModel set checkRead = true where assignee = :assignee and checkRead = false");
+        query.setParameter("assignee", assignee);
+        int rowsUpdated = query.executeUpdate();
+        
+        transaction.commit();
+        System.out.println(rowsUpdated + " tickets marked as read for assignee: " + assignee);
+    } catch (HibernateException e) {
+        if (transaction != null) {
+            transaction.rollback();
+        }
+        e.printStackTrace();
+    } finally {
+        if (session != null) {
+            session.close();
+        }
+    }
+}
+
+
 
 public String getUserRole() {
     return user_role;

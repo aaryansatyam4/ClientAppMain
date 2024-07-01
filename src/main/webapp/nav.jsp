@@ -1,5 +1,8 @@
 <%@ page import="com.digicode.dao.LoginServiceImpl" %>
 <%@ page import="com.digicode.model.EmployeeModel" %>
+<%@ page import="com.digicode.model.TicketsModel" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="javax.servlet.http.HttpServletRequest" %>
 <%
@@ -19,6 +22,9 @@
     
     LoginServiceImpl loginService = new LoginServiceImpl();
     EmployeeModel user = loginService.getUserById(username);
+    
+    // Fetch unread tickets for notifications
+    List<TicketsModel> unreadTickets = loginService.getUnreadTicketsByAssignee(username);
 %>
 
 <nav class="navbar navbar-expand navbar-light navbar-bg">
@@ -28,73 +34,37 @@
 
     <div class="navbar-collapse collapse">
         <ul class="navbar-nav navbar-align">
-            <%-- Conditionally show "Global" and "Plants" dropdown based on user position --%>
-            <% 
-                String position = user != null ? user.getPosition() : "user";
-                if ("admin".equals(position) || "super_admin".equals(position)) { 
-            %>
-                <li>
-                    <select id="plant" class="form-control browser-default custom-select">
-                        <% if ("super_admin".equals(position)) { %>
-                            <option value="global">Global</option>
-                        <% } %>
-                        <option value="plant1">Plant1</option>
-                        <option value="plant2">Plant2</option>
-                        <option value="plant3">Plant3</option>
-                    </select>
-                </li>
-            <% } %>
-
-            <li class="nav-item dropdown">
-                <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
-                    <div class="position-relative">
-                        <i class="align-middle" data-feather="bell"></i>
-                        <span class="indicator">4</span>
-                    </div>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
-                    <div class="dropdown-menu-header">4 New Notifications</div>
-                    <div class="list-group">
-                        <a href="#" class="list-group-item">
-                            <div class="row g-0 align-items-center">
-                                <div class="col-2">
-                                    <i class="text-danger" data-feather="alert-circle"></i>
-                                </div>
-                                <div class="col-10">
-                                    <div class="text-dark">Update completed</div>
-                                    <div class="text-muted small mt-1">Restart server 12 to complete the update.</div>
-                                    <div class="text-muted small mt-1">30m ago</div>
-                                </div>
+            <!-- Notifications dropdown -->
+                <li class="nav-item dropdown">
+        <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+            <div class="position-relative">
+                <i class="align-middle" data-feather="bell"></i>
+                <span class="indicator"><%= unreadTickets.size() %></span>
+            </div>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+            <div class="dropdown-menu-header"><%= unreadTickets.size() %> New Notifications</div>
+            <div class="list-group">
+                <% for (TicketsModel ticket : unreadTickets) { %>
+                    <a href="#" class="list-group-item mark-as-read" data-ticket-id="<%= ticket.getId() %>">
+                        <div class="row g-0 align-items-center">
+                            <div class="col-2">
+                                <i class="text-danger" data-feather="alert-circle"></i>
                             </div>
-                        </a>
-                        <!-- Other notification items here -->
-                    </div>
-                    <div class="dropdown-menu-footer">
-                        <a href="#" class="text-muted">Show all notifications</a>
-                    </div>
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown" data-bs-toggle="dropdown">
-                    <div class="position-relative">
-                        <i class="align-middle" data-feather="message-square"></i>
-                    </div>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="messagesDropdown">
-                    <div class="dropdown-menu-header">
-                        <div class="position-relative">4 New Messages</div>
-                    </div>
-                    <div class="list-group">
-                        <a href="#" class="list-group-item">
-                            <!-- Message items here -->
-                        </a>
-                        <!-- Other message items here -->
-                    </div>
-                    <div class="dropdown-menu-footer">
-                        <a href="#" class="text-muted">Show all messages</a>
-                    </div>
-                </div>
-            </li>
+                            <div class="col-10">
+                                <div class="text-dark"><%= ticket.getTicketName() %></div>
+                                <div class="text-muted small mt-1"><%= ticket.getTicketDescription() %></div>
+                                <div class="text-muted small mt-1">Created <%= ticket.getCreatedAt() %></div>
+                            </div>
+                        </div>
+                    </a>
+                <% } %>
+            </div>
+        </div>
+    </li>
+
+            <!-- Other navigation items -->
+            
             <li class="nav-item dropdown">
                 <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
                     <i class="align-middle" data-feather="settings"></i>
@@ -104,10 +74,6 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class="dropdown-item" href="profile.jsp"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
-                    <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i> Analytics</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i> Settings & Privacy</a>
-                    <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help Center</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="logout1">Log out</a>
                 </div>
@@ -115,3 +81,32 @@
         </ul>
     </div>
 </nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const alertsDropdown = document.getElementById("alertsDropdown");
+
+    if (alertsDropdown) {
+        alertsDropdown.addEventListener("click", function() {
+            const username = "<%= username %>";
+
+            fetch("MarkNotificationsReadServlet", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({username: username})
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === "success") {
+                    console.log("Notifications marked as read.");
+                } else {
+                    console.log("Failed to mark notifications as read.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    }
+});
+</script>

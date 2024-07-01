@@ -14,6 +14,7 @@ public class TicketsModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
     @Column(name = "ticket_name")
@@ -48,20 +49,29 @@ public class TicketsModel implements Serializable {
 
     @Column(name = "manager")
     private String manager;
-    
-    private Date Due_Date;
-    
-    private Date CompletedAt;
+
+    @Column(name = "Due_Date")
+    private Date dueDate;
+
+    @Column(name = "CompletedAt")
+    private Date completedAt;
+
+    @Column(name = "check_read", columnDefinition = "boolean default false")
+    private Boolean checkRead = false;
 
     // One-to-many relationship with TicketLogs
-    @OneToMany(mappedBy = "ticketId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TicketLogs> ticketLogList = new ArrayList<>();
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TicketLogs> ticketLogs = new ArrayList<>();
 
-    // Constructors, Getters, and Setters
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subgroup_id")
+    private TaskSubgroupModel taskSubgroup;
 
+    // Constructors
     public TicketsModel() {
     }
 
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -158,27 +168,43 @@ public class TicketsModel implements Serializable {
         this.manager = manager;
     }
 
-    public List<TicketLogs> getTicketLogList() {
-        return ticketLogList;
+    public Date getDueDate() {
+        return dueDate;
     }
 
-    public void setTicketLogList(List<TicketLogs> ticketLogList) {
-        this.ticketLogList = ticketLogList;
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
-	public Date getDue_Date() {
-		return Due_Date;
-	}
+    public Date getCompletedAt() {
+        return completedAt;
+    }
 
-	public void setDue_Date(Date due_Date) {
-		Due_Date = due_Date;
-	}
+    public void setCompletedAt(Date completedAt) {
+        this.completedAt = completedAt;
+    }
 
-	public Date getCompletedAt() {
-		return CompletedAt;
-	}
+    public Boolean getCheckRead() {
+        return checkRead;
+    }
 
-	public void setCompletedAt(Date completedAt) {
-		CompletedAt = completedAt;
-	}
+    public void setCheckRead(Boolean checkRead) {
+        this.checkRead = checkRead;
+    }
+
+    public List<TicketLogs> getTicketLogs() {
+        return ticketLogs;
+    }
+
+    public void setTicketLogs(List<TicketLogs> ticketLogs) {
+        this.ticketLogs = ticketLogs;
+    }
+
+    public TaskSubgroupModel getTaskSubgroup() {
+        return taskSubgroup;
+    }
+
+    public void setTaskSubgroup(TaskSubgroupModel taskSubgroup) {
+        this.taskSubgroup = taskSubgroup;
+    }
 }

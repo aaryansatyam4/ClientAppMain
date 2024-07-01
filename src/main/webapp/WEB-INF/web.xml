@@ -182,4 +182,34 @@
     <servlet-name>TicketDetailsServlet</servlet-name>
     <url-pattern>/TicketDetailsServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>TaskServlet</display-name>
+    <servlet-name>TaskServlet</servlet-name>
+    <servlet-class>com.digicode.controller.TaskServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TaskServlet</servlet-name>
+    <url-pattern>/TaskServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MarkTicketAsReadServlet</display-name>
+    <servlet-name>MarkTicketAsReadServlet</servlet-name>
+    <servlet-class>com.digicode.controller.MarkTicketAsReadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MarkTicketAsReadServlet</servlet-name>
+    <url-pattern>/MarkTicketAsReadServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MarkNotificationsReadServlet</display-name>
+    <servlet-name>MarkNotificationsReadServlet</servlet-name>
+    <servlet-class>com.digicode.controller.MarkNotificationsReadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MarkNotificationsReadServlet</servlet-name>
+    <url-pattern>/MarkNotificationsReadServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

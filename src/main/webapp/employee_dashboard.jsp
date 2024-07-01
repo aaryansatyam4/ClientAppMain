@@ -223,42 +223,43 @@
                     </div>
                 </div>
                 
-                <!-- Pending Tickets -->
-                    <div class="row">
-                        <div class="col-xl-12 col-xxl-12 d-flex">
-                            <div class="card flex-fill w-100">
-                                <div class="card-header">
-                                    <h5 class="card-title">Pending Tickets</h5>
-                                </div>
-                                <div class="card-body">
-                                    <table class="table table-hover my-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Ticket Name</th>
-                                                <th class="d-none d-xl-table-cell">Ticket Id</th>
-                                                <th>Severity</th>
-                                                <th class="d-none d-md-table-cell">Remarks</th>
-                                                <th class="d-none d-md-table-cell">Assigned By</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% for (TicketsModel ticket : assignedTickets) { %>
-                                                <tr>
-                                                    <td><%= ticket.getTicketName() %></td>
-                                                    <td class="d-none d-xl-table-cell"><%= ticket.getId() %></td>
-                                                    <td><span class="badge bg-danger"><%= ticket.getSeverity() %></span></td>
-                                                    <td class="d-none d-md-table-cell"><%= ticket.getRemark() %></td>
-                                                    <td class="d-none d-md-table-cell"><%= ticket.getCreatedBy() %></td>
-                                                    <td><button class="btn btn-primary" onclick="openModal('<%= ticket.getId() %>')">Action</button></td>
-                                                </tr>
-                                            <% } %>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <%-- Pending Tickets Table --%>
+<div class="row">
+    <div class="col-xl-12 col-xxl-12 d-flex">
+        <div class="card flex-fill w-100">
+            <div class="card-header">
+                <h5 class="card-title">Pending Tickets</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover my-0">
+                    <thead>
+                        <tr>
+                            <th>Ticket Name</th>
+                            <th class="d-none d-xl-table-cell">Ticket Id</th>
+                            <th>Severity</th>
+                            <th class="d-none d-md-table-cell">Remarks</th>
+                            <th class="d-none d-md-table-cell">Assigned By</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (TicketsModel ticket : assignedTickets) { %>
+                            <tr>
+                                <td><%= ticket.getTicketName() %></td>
+                                <td class="d-none d-xl-table-cell"><%= ticket.getId() %></td>
+                                <td><span class="badge bg-danger"><%= ticket.getSeverity() %></span></td>
+                                <td class="d-none d-md-table-cell"><%= ticket.getRemark() %></td>
+                                <td class="d-none d-md-table-cell"><%= ticket.getCreatedBy() %></td>
+                                <td><button class="btn btn-primary" onclick="openModal('<%= ticket.getId() %>')">Action</button></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+                
             </main>
             <jsp:include page="footer.jsp"></jsp:include>
         </div>
@@ -267,67 +268,67 @@
 
                     
 
-                    
-    <!-- The Modal -->
-    <div id="ticketModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <form method="post" action="ticketAction">
-                <input type="hidden" name="ticketId" id="ticketId">
-                <div class="form-group">
-                    <label for="action">Action</label>
-                    <select name="action" id="action" class="form-control" onchange="handleActionChange()">
-                        <option value="completed">Mark as Completed</option>
-                        <option value="transfer">Transfer to</option>
-                    </select>
-                </div>
-                <div class="form-group" id="transferToGroup" style="display:none;">
-                    <label for="transferTo">Transfer To</label>
-                    <select name="transferTo" id="transferTo" class="form-control">
-                        <!-- Options populated dynamically using JavaScript -->
-                        <% for (EmployeeModel user : users) { %>
-                            <option value="<%= user.getFirstName() %>"><%= user.getFirstName() %></option>
-                        <% } %>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="remarks">Remarks</label>
-                    <textarea name="remarks" id="remarks" class="form-control"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
+                    <%-- The Modal --%>
+<div id="ticketModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <form method="post" action="ticketAction">
+            <input type="hidden" name="ticketId" id="ticketId">
+            <div class="form-group">
+                <label for="action">Action</label>
+                <select name="action" id="action" class="form-control" onchange="handleActionChange()">
+                    <option value="completed">Mark as Completed</option>
+                    <option value="transfer">Transfer to</option>
+                </select>
+            </div>
+            <div class="form-group" id="transferToGroup" style="display:none;">
+                <label for="transferTo">Transfer To</label>
+                <select name="transferTo" id="transferTo" class="form-control">
+                    <% for (EmployeeModel user : users) { %>
+                        <option value="<%= user.getUserId() %>"><%= user.getFirstName() %></option>
+                    <% } %>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="remarks">Remarks</label>
+                <textarea name="remarks" id="remarks" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
     </div>
+</div>
 
-    <script>
-        var modal = document.getElementById("ticketModal");
-        var span = document.getElementsByClassName("close")[0];
-        var transferToGroup = document.getElementById("transferToGroup");
+<script>
+    var modal = document.getElementById("ticketModal");
+    var span = document.getElementsByClassName("close")[0];
+    var transferToGroup = document.getElementById("transferToGroup");
 
-        function openModal(ticketId) {
-            document.getElementById("ticketId").value = ticketId;
-            modal.style.display = "block";
-        }
+    function openModal(ticketId) {
+        document.getElementById("ticketId").value = ticketId;
+        modal.style.display = "block";
+    }
 
-        span.onclick = function() {
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
             modal.style.display = "none";
         }
+    }
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+    function handleActionChange() {
+        var action = document.getElementById("action").value;
+        if (action === "transfer") {
+            transferToGroup.style.display = "block";
+        } else {
+            transferToGroup.style.display = "none";
         }
-
-        function handleActionChange() {
-            var action = document.getElementById("action").value;
-            if (action === "transfer") {
-                transferToGroup.style.display = "block";
-            } else {
-                transferToGroup.style.display = "none";
-            }
-        }
-    </script>
+    }
+</script>
+                    
+   
 
     <script src="./assets/js/app.js"></script>
 </body>

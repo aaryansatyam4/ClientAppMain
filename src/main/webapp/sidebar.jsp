@@ -24,7 +24,7 @@
 
 <nav id="sidebar" class="sidebar js-sidebar">
     <div class="sidebar-content js-simplebar">
-        <a class="sidebar-brand" href="index.html">
+        <a class="sidebar-brand" href="#">
             <span class="align-middle">DigiCode</span>
         </a>
 
@@ -77,14 +77,7 @@
                 </a>
             </li>
 
-            <li class="sidebar-header">Settings</li>
-
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="#">
-                    <i class="align-middle" data-feather="user"></i>
-                    <span class="align-middle">Announcement</span>
-                </a>
-            </li>
+           
 
             <li class="sidebar-item">
                 <a class="sidebar-link" href="#">
