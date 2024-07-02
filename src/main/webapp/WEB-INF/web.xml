@@ -212,4 +212,24 @@
     <servlet-name>MarkNotificationsReadServlet</servlet-name>
     <url-pattern>/MarkNotificationsReadServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UploadProfilePictureServlet</display-name>
+    <servlet-name>UploadProfilePictureServlet</servlet-name>
+    <servlet-class>com.digicode.controller.UploadProfilePictureServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UploadProfilePictureServlet</servlet-name>
+    <url-pattern>/UploadProfilePictureServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EmployeeDashboardServlet</display-name>
+    <servlet-name>EmployeeDashboardServlet</servlet-name>
+    <servlet-class>com.digicode.controller.EmployeeDashboardServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EmployeeDashboardServlet</servlet-name>
+    <url-pattern>/EmployeeDashboardServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -85,6 +85,8 @@ public class TicketActionServlet1 extends HttpServlet {
     private void handleCompleteAction(TicketsModel ticket, String remarks) {
         ticket.setStatus(COMPLETED_STATUS);
         ticket.setRemark(remarks);
+        Date currentDate = new Date();
+        ticket.setCompletedAt(currentDate);
     }
 
     private void handleTransferAction(Session session, HttpServletRequest req, TicketsModel ticket, String transferTo, String remarks) {

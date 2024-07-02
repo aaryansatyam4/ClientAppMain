@@ -11,7 +11,6 @@
 <%@ page import="com.digicode.model.TicketLogs" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 
-
 <%
     // Initialize Hibernate SessionFactory
     Configuration configuration = new Configuration().configure();
@@ -30,6 +29,9 @@
     Long completedCount = 0L;
     List<EmployeeModel> users = new ArrayList<>();
     Long logCount = 0L; // To count the number of logs created by the user
+    Long totalTicketsCount = 0L; // To count the total number of tickets
+    Long pendingTicketsCount = 0L; // To count the number of pending tickets
+    long[] monthlyCompletedCounts = new long[12];
     
     try {
         transaction = hibernateSession.beginTransaction();
@@ -62,6 +64,26 @@
         // Query number of logs created by the user
         logCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketLogs WHERE createdBy = :username").setParameter("username", username).uniqueResult();
 
+        // Query total tickets count
+        totalTicketsCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketsModel WHERE assignee = :username").setParameter("username", username).uniqueResult();
+
+        // Query pending tickets count
+        pendingTicketsCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketsModel WHERE status != 'Completed' AND assignee = :username").setParameter("username", username).uniqueResult();
+
+        
+        // Query the number of completed tickets per month
+        List<Object[]> completedPerMonth = hibernateSession.createQuery(
+            "SELECT MONTH(CompletedAt), COUNT(*) FROM TicketsModel WHERE status = 'Completed' AND assignee = :username GROUP BY MONTH(CompletedAt)"
+        ).setParameter("username", username).list();
+        
+        for (Object[] result : completedPerMonth) {
+            int month = ((Integer) result[0]) - 1; // Months in Java are 0-based for arrays
+            long count = (Long) result[1];
+            monthlyCompletedCounts[month] = count;
+        }
+        
+        
+        
         transaction.commit();
     } catch (Exception e) {
         if (transaction != null) {
@@ -75,6 +97,7 @@
         // sessionFactory.close();
     }
 %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -93,6 +116,8 @@
     <link href="./assets/css/app.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         .card-equal-height {
             height: 100%;
@@ -129,6 +154,11 @@
             text-decoration: none;
             cursor: pointer;
         }
+            .chart-container {
+        position: relative;
+        width: 100%;
+        height: 300px; /* Adjust height as needed */
+    }
     </style>
 </head>
 <body>
@@ -139,6 +169,58 @@
             <main class="content">
                 <div class="container-fluid p-0">
                     <!-- Top Boxes -->
+                    
+                    <div class="row">
+                    
+                     <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h3 class="mb-2"><%= completedCount %></h3>
+                                            <p class="mb-0">Completed</p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <i class="fa fa-check-circle text-success fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h3 class="mb-2"><%= pendingTicketsCount %></h3>
+                                            <p class="mb-0">Pending Tasks</p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <i class="fa fa-hourglass-half text-warning fa-2x"></i>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h3 class="mb-2"><%= totalTicketsCount %></h3>
+                                            <p class="mb-0">Total Tasks</p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <i class="fa fa-tasks text-info fa-2x"></i>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
                     <div class="row">
                         <div class="col-md-3 col-sm-6 mb-3">
                             <div class="card">
@@ -170,6 +252,11 @@
                                 </div>
                             </div>
                         </div>
+                        
+                       
+                        
+                         
+                        
                         <div class="col-md-3 col-sm-6 mb-3">
                             <div class="card">
                                 <div class="card-body">
@@ -179,56 +266,49 @@
                                             <p class="mb-0">Low Severity</p>
                                         </div>
                                         <div class="flex-shrink-0">
-                                            <i class="fa fa-info-circle text-info fa-2x"></i>
+                                            <i class="fa fa-arrow-down text-success fa-2x"></i>
+                                            
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 col-sm-6 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1">
-                                            <h3 class="mb-2"><%= completedCount %></h3>
-                                            <p class="mb-0">Completed</p>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <i class="fa fa-check-circle text-success fa-2x"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
                     </div>
                     
                     <!-- Logs Created by the User -->
-                    <div class="row">
-                        <div class="col-xl-3 col-lg-6">
-                            <div class="card flex-fill w-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">Logs Created</h5>
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1">
-                                            <h3 class="mb-2"><%= logCount %></h3>
-                                            <p class="mb-0">Number of Logs</p>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <i class="fa fa-list-alt text-primary fa-2x"></i>
-                                        </div>
-                                    </div>
-                                </div>
+                   
+                </div>
+                
+              <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <div class="card card-equal-height">
+                            <div class="chart-container">
+                                <h6 class="card-title">Completed Tickets Per Month</h6>
+                                <canvas id="monthlyCompletedChart" class="chart-container"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="col-lg-6 mb-3">
+                        <div class="card card-equal-height">
+                            <div class="chart-container">
+                                <h6 class="card-title">Completed Tickets Per Month</h6>
+                                <canvas id="severityChart"></canvas>
+                                
                             </div>
                         </div>
                     </div>
                 </div>
+                
+                
+   
                 
                 <%-- Pending Tickets Table --%>
 <div class="row">
     <div class="col-xl-12 col-xxl-12 d-flex">
         <div class="card flex-fill w-100">
             <div class="card-header">
-                <h5 class="card-title">Pending Tickets</h5>
+                <h5 class="card-title">ONGOING TASKS</h5>
             </div>
             <div class="card-body">
                 <table class="table table-hover my-0">
@@ -259,6 +339,9 @@
         </div>
     </div>
 </div>
+
+
+ 
                 
             </main>
             <jsp:include page="footer.jsp"></jsp:include>
@@ -327,7 +410,102 @@
         }
     }
 </script>
-                    
+
+<script>
+var ctx = document.getElementById('severityChart').getContext('2d');
+var severityChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['High Severity', 'Medium Severity', 'Low Severity'],
+        datasets: [{
+            label: 'Severity Counts',
+            data: [<%= highSeverityCount %>, <%= mediumSeverityCount %>, <%= lowSeverityCount %>],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.6)', // Red for High Severity
+                'rgba(255, 206, 86, 0.6)', // Yellow for Medium Severity
+                'rgba(54, 162, 235, 0.6)' // Blue for Low Severity
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(54, 162, 235, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+                fontColor: '#333',
+                fontSize: 12
+            }
+        }
+    }
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var ctxBar = document.getElementById('monthlyCompletedChart').getContext('2d');
+        var monthlyCompletedChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: 'Completed Tickets',
+                    data: <%= new com.google.gson.Gson().toJson(monthlyCompletedCounts) %>,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // Light teal
+                    borderColor: 'rgba(75, 192, 192, 1)', // Teal
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 5 // Adjust the step size here as needed
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        enabled: false // Disable tooltips
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            fontColor: '#333',
+                            fontSize: 12
+                        }
+                    }
+                },
+                hover: {
+                    mode: null // Disable hovering effect
+                },
+                interaction: {
+                    mode: 'index', // Keep track of index for tooltips
+                    intersect: false
+                }
+            }
+        });
+
+        // Ensure chart resizes with container
+        window.addEventListener('resize', function () {
+            monthlyCompletedChart.resize();
+        });
+    });
+</script>
+
+
+
    
 
     <script src="./assets/js/app.js"></script>
