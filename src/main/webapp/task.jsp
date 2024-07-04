@@ -316,7 +316,7 @@
     <script>
     $(document).ready(function () {
         // Initialize DataTable with buttons
-        new DataTable('#example', {
+        var table = $('#example').DataTable({
             layout: {
                 topStart: {
                     buttons: [{
@@ -348,7 +348,8 @@
         var modal = document.getElementById("ticketModal");
         var span = document.getElementsByClassName("close")[0];
 
-        $(".taskId").on("click", function () {
+        // Event delegation for dynamically loaded content
+        $(document).on("click", ".taskId", function () {
             // Populate the modal with data from the clicked task ID column
             $("#ticketId").text($(this).data("task-id"));
             $("#ticketName").text($(this).data("ticket-name"));
@@ -372,8 +373,16 @@
         // Close the modal when the user clicks the "close" button
         span.onclick = function () {
             modal.style.display = "none";
-        }
+        };
+
+        // Close the modal when the user clicks outside the modal content
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
     });
+
     </script>
 
 </body>

@@ -154,11 +154,55 @@
             text-decoration: none;
             cursor: pointer;
         }
-            .chart-container {
-        position: relative;
-        width: 100%;
-        height: 300px; /* Adjust height as needed */
-    }
+        
+           
+  
+   .chart-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.card-title {
+    margin: 0;
+    padding: 10px 0; /* Adjust spacing as needed */
+    font-size: 1rem; /* Adjust font size if needed */
+    text-align: center;
+}
+
+#severityChart {
+    width: 60%; /* Set desired width percentage */
+    height: auto; /* Adjust height automatically */
+    max-height: 70%; /* Optional: Adjust to control max height */
+}
+   
+
+ 
+#element {
+  display: block;
+
+  box-sizing: border-box;
+
+  height: 304px;
+
+  width: auto;
+
+}
+
+#element.hovered {
+    width: 398px; /* Ensure units are provided */
+    height: auto;
+    
+}
+
+#element.clicked {
+    background-color: lightblue;
+    
+}
+ 
     </style>
 </head>
 <body>
@@ -214,6 +258,22 @@
                                         <div class="flex-shrink-0">
                                             <i class="fa fa-tasks text-info fa-2x"></i>
                                             
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h3 class="mb-2"><%= logCount %></h3>
+                                            <p class="mb-0">Ticket Transfered</p>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <i class="fa fa-exchange text-success fa-2x"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -281,25 +341,25 @@
                 </div>
                 
               <div class="row">
-                    <div class="col-lg-6 mb-3">
-                        <div class="card card-equal-height">
-                            <div class="chart-container">
-                                <h6 class="card-title">Completed Tickets Per Month</h6>
-                                <canvas id="monthlyCompletedChart" class="chart-container"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                     <div class="col-lg-6 mb-3">
-                        <div class="card card-equal-height">
-                            <div class="chart-container">
-                                <h6 class="card-title">Completed Tickets Per Month</h6>
-                                <canvas id="severityChart"></canvas>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
+    <div class="col-lg-6 mb-3">
+        <div class="card card-equal-height">
+            <div class="chart-container">
+                <h6 class="card-title">Completed Tickets Per Month</h6>
+                <canvas id="monthlyCompletedChart" class="chart-container"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+    <div class="card card-equal-height">
+        <div class="chart-container">
+            <h6 class="card-title">Pending Tickets</h6>
+            <canvas id="severityChart"></canvas>
+        </div>
+    </div>
+</div>
+    
+</div>
+              
                 
    
                 
@@ -323,7 +383,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (TicketsModel ticket : assignedTickets) { %>
+                        <% 
+                        if (assignedTickets.isEmpty()) { 
+                        %>
+                            <tr>
+                                <td colspan="6" class="text-center">No Ongoing Tasks</td>
+                            </tr>
+                        <% 
+                        } else {
+                            for (TicketsModel ticket : assignedTickets) { 
+                        %>
                             <tr>
                                 <td><%= ticket.getTicketName() %></td>
                                 <td class="d-none d-xl-table-cell"><%= ticket.getId() %></td>
@@ -332,13 +401,17 @@
                                 <td class="d-none d-md-table-cell"><%= ticket.getCreatedBy() %></td>
                                 <td><button class="btn btn-primary" onclick="openModal('<%= ticket.getId() %>')">Action</button></td>
                             </tr>
-                        <% } %>
+                        <% 
+                            } 
+                        }
+                        %>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+
 
 
  
@@ -412,41 +485,58 @@
 </script>
 
 <script>
-var ctx = document.getElementById('severityChart').getContext('2d');
-var severityChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['High Severity', 'Medium Severity', 'Low Severity'],
-        datasets: [{
-            label: 'Severity Counts',
-            data: [<%= highSeverityCount %>, <%= mediumSeverityCount %>, <%= lowSeverityCount %>],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.6)', // Red for High Severity
-                'rgba(255, 206, 86, 0.6)', // Yellow for Medium Severity
-                'rgba(54, 162, 235, 0.6)' // Blue for Low Severity
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(54, 162, 235, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-                fontColor: '#333',
-                fontSize: 12
+    var pendingTasksData = [<%= highSeverityCount %>, <%= mediumSeverityCount %>, <%= lowSeverityCount %>];
+    var hasPendingTasks = pendingTasksData.reduce((a, b) => a + b, 0) > 0; // Check if there are any pending tasks
+
+    var ctx = document.getElementById('severityChart').getContext('2d');
+    var severityChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: hasPendingTasks ? ['High Severity', 'Medium Severity', 'Low Severity'] : ['No Pending Tasks'],
+            datasets: [{
+                label: 'Severity Counts',
+                data: hasPendingTasks ? pendingTasksData : [1], // Show 1 to avoid empty chart issue
+                backgroundColor: hasPendingTasks ? [
+                    'rgba(255, 99, 132, 0.6)', // Red for High Severity
+                    'rgba(255, 206, 86, 0.6)', // Yellow for Medium Severity
+                    'rgba(54, 162, 235, 0.6)' // Blue for Low Severity
+                ] : ['rgba(211, 211, 211, 0.6)'], // Grey for no pending tasks
+                borderColor: hasPendingTasks ? [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ] : ['rgba(211, 211, 211, 1)'], // Grey for no pending tasks
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                    fontColor: '#333',
+                    fontSize: 12
+                }
             }
         }
-    }
-});
+    });
+
+    // Add event listeners for hover and click
+    ctx.canvas.addEventListener('mouseenter', function() {
+        document.getElementById('element').classList.add('hovered');
+    });
+
+    ctx.canvas.addEventListener('mouseleave', function() {
+        document.getElementById('element').classList.remove('hovered');
+    });
+
+    ctx.canvas.addEventListener('click', function() {
+        document.getElementById('element').classList.toggle('clicked');
+    });
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

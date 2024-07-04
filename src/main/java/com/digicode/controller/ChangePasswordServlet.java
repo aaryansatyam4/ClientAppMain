@@ -24,6 +24,12 @@ public class ChangePasswordServlet extends HttpServlet {
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
+        // Validate input
+        if (userId == null || currentPassword == null || newPassword == null || confirmPassword == null) {
+            response.getWriter().println("All fields are required.");
+            return;
+        }
+
         // Check if new password and confirm password match
         if (!newPassword.equals(confirmPassword)) {
             response.getWriter().println("New password and confirm password do not match.");
@@ -37,7 +43,7 @@ public class ChangePasswordServlet extends HttpServlet {
         // Check if current password matches the one stored in the database
         if (user != null && user.getPassword().equals(currentPassword)) {
             // Update password
-            user.setPassword(newPassword);
+            user.setPassword(newPassword); // Consider hashing the password
             boolean updated = loginService.updateUser(user);
 
             if (updated) {
