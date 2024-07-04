@@ -497,9 +497,9 @@
                 label: 'Severity Counts',
                 data: hasPendingTasks ? pendingTasksData : [1], // Show 1 to avoid empty chart issue
                 backgroundColor: hasPendingTasks ? [
-                    'rgba(255, 99, 132, 0.6)', // Red for High Severity
-                    'rgba(255, 206, 86, 0.6)', // Yellow for Medium Severity
-                    'rgba(54, 162, 235, 0.6)' // Blue for Low Severity
+                    'rgba(199, 0, 57)', // Red for High Severity
+                    'rgba(225, 193, 110)', // Yellow for Medium Severity
+                    'rgba(115, 147, 179)' // Blue for Low Severity
                 ] : ['rgba(211, 211, 211, 0.6)'], // Grey for no pending tasks
                 borderColor: hasPendingTasks ? [
                     'rgba(255, 99, 132, 1)',
@@ -548,8 +548,8 @@
                 datasets: [{
                     label: 'Completed Tickets',
                     data: <%= new com.google.gson.Gson().toJson(monthlyCompletedCounts) %>,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // Light teal
-                    borderColor: 'rgba(75, 192, 192, 1)', // Teal
+                    backgroundColor: 'rgba(95, 158, 160)', 
+                    borderColor: 'rgba(75, 192, 192, 1)', 
                     borderWidth: 1
                 }]
             },

@@ -315,29 +315,26 @@
 
     <script>
     $(document).ready(function () {
-        // Initialize DataTable with buttons
+        // Initialize DataTable with separate buttons for Export and Column Visibility
         var table = $('#example').DataTable({
-            layout: {
-                topStart: {
-                    buttons: [{
-                        extend: 'collection',
-                        className: 'custom-html-collection',
-                        buttons: [
-                            '<h3>Export</h3>',
-                            'pdf',
-                            'csv',
-                            'excel',
-                            '<h3 class="not-top-heading">Column Visibility</h3>',
-                            'columnsToggle'
-                        ]
-                    }]
+            buttons: [
+                {
+                    extend: 'collection',
+                    text: 'Export <i class="fa fa-caret-down" aria-hidden="true"></i>',
+                    buttons: [
+                        'pdf',
+                        'csv',
+                        'excel'
+                    ]
+                },
+                {
+                    extend: 'collection',
+                    text: 'Column Visibility <i class="fa fa-caret-down" aria-hidden="true"></i>',
+                    buttons: ['columnsToggle']
                 }
-            }
+            ],
+            dom: 'Bfrtip' // Display buttons
         });
-
-        // Customize the appearance of the collection button
-        $('.custom-html-collection').empty();
-        $('.custom-html-collection').html('<span>Actions <i class="fa fa-caret-down" aria-hidden="true"></i></span>');
 
         // Redirect to new task page on button click
         $('.newEmployee').click(function () {
@@ -382,6 +379,7 @@
             }
         };
     });
+
 
     </script>
 

@@ -22,6 +22,7 @@
     
     LoginServiceImpl loginService = new LoginServiceImpl();
     EmployeeModel user = loginService.getUserById(username);
+    String position = user != null ? user.getPosition() : "user";
     
     // Fetch unread tickets for notifications
     List<TicketsModel> unreadTickets = loginService.getUnreadTicketsByAssignee(username);
@@ -34,37 +35,48 @@
 
     <div class="navbar-collapse collapse">
         <ul class="navbar-nav navbar-align">
+            <%-- Conditionally display "Plant" dropdown for super_admin --%>
+            <% if ("super_admin".equals(position)) { %>
+                <li>
+                    <select id="plant" class="form-control browser-default custom-select">
+                        <option value="Global">Global</option>
+                        <option value="Plant1">Plant1</option>
+                        <option value="Plant2">Plant2</option>
+                        <option value="Plant3">Plant3</option>
+                    </select>
+                </li>
+            <% } %>
+
             <!-- Notifications dropdown -->
-                <li class="nav-item dropdown">
-        <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
-            <div class="position-relative">
-                <i class="align-middle" data-feather="bell"></i>
-                <span class="indicator"><%= unreadTickets.size() %></span>
-            </div>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
-            <div class="dropdown-menu-header"><%= unreadTickets.size() %> New Notifications</div>
-            <div class="list-group">
-                <% for (TicketsModel ticket : unreadTickets) { %>
-                    <a href="#" class="list-group-item mark-as-read" data-ticket-id="<%= ticket.getId() %>">
-                        <div class="row g-0 align-items-center">
-                            <div class="col-2">
-                                <i class="text-danger" data-feather="alert-circle"></i>
-                            </div>
-                            <div class="col-10">
-                                <div class="text-dark"><%= ticket.getTicketName() %></div>
-                                <div class="text-muted small mt-1"><%= ticket.getTicketDescription() %></div>
-                                <div class="text-muted small mt-1">Created <%= ticket.getCreatedAt() %></div>
-                            </div>
-                        </div>
-                    </a>
-                <% } %>
-            </div>
-        </div>
-    </li>
+            <li class="nav-item dropdown">
+                <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                    <div class="position-relative">
+                        <i class="align-middle" data-feather="bell"></i>
+                        <span class="indicator"><%= unreadTickets.size() %></span>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+                    <div class="dropdown-menu-header"><%= unreadTickets.size() %> New Notifications</div>
+                    <div class="list-group">
+                        <% for (TicketsModel ticket : unreadTickets) { %>
+                            <a href="#" class="list-group-item mark-as-read" data-ticket-id="<%= ticket.getId() %>">
+                                <div class="row g-0 align-items-center">
+                                    <div class="col-2">
+                                        <i class="text-danger" data-feather="alert-circle"></i>
+                                    </div>
+                                    <div class="col-10">
+                                        <div class="text-dark"><%= ticket.getTicketName() %></div>
+                                        <div class="text-muted small mt-1"><%= ticket.getTicketDescription() %></div>
+                                        <div class="text-muted small mt-1">Created <%= ticket.getCreatedAt() %></div>
+                                    </div>
+                                </div>
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+            </li>
 
             <!-- Other navigation items -->
-            
             <li class="nav-item dropdown">
                 <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
                     <i class="align-middle" data-feather="settings"></i>
