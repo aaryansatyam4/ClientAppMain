@@ -1,16 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
-
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
-<%@page import="java.util.Date"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="com.digicode.model.EmployeeModel"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="com.digicode.dao.LoginServiceImpl"%>
-
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 
 
 <!DOCTYPE html>
@@ -40,265 +28,511 @@
 	href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
 	rel="stylesheet">
 
-<link
-	href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css"
-	rel="stylesheet">
-
-<link
-	href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css"
-	rel="stylesheet">
-
-
-
-
-<style>
-div.dt-button-collection {
-    width: 400px;
-}
- 
-div.dt-button-collection button.dt-button {
-    display: inline-block;
-    width: 32%;
-}
-div.dt-button-collection button.buttons-colvis {
-    display: inline-block;
-    width: 49%;
-}
-div.dt-button-collection h3 {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    font-weight: 100;
-    border-bottom: 1px solid rgba(150, 150, 150, 0.5);
-    font-size: 1em;
-    padding: 0 1em;
-}
-div.dt-button-collection h3.not-top-heading {
-    margin-top: 10px;
-}
-</style>
-
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
+
 	<div class="wrapper">
 
 		<jsp:include page="sidebar.jsp"></jsp:include>
+
 
 		<div class="main">
 
 			<jsp:include page="nav.jsp"></jsp:include>
 
-			<!-- main container start -->
 			<main class="content">
 				<div class="container-fluid p-0">
 
-					
-
-
 					<div class="row">
-						<div class="col-12">
-							<div class="card">
-								<div class="card-header">
-									<Strong class="h3 mb-3">Administrators List</Strong>
-									
-								</div>
+						<div class="col-xl-12 col-xxl-12 d-flex">
+							<div class="w-100">
+								<div class="row">
+								
+									<div class="col-sm-3">
+										<div class="card super_critical">
+											<div class="card-body">
+												<div class="row">
+													<div class="col mt-0">
+														<h5 class="card-title">Super Critical</h5>
+													</div>
 
-
-								<div class="card-body">
-
-									<div class="">
-										<table id="example" class="display" style="width: 100%">
-											<thead>
-												<tr>
-													<th>ID</th>
-													<th>Name</th>
-													<th>DOB</th>
-													<th>Position</th>
-													<th>Location</th>
-													<th>Start date</th>
-													<th>Address</th>
-												</tr>
-											</thead>
-											<tbody>
-												<%
-												LoginServiceImpl loginServiceImpl = new LoginServiceImpl();
-																						List<EmployeeModel> empList = new ArrayList<EmployeeModel>();
-																						empList = loginServiceImpl.listAllEmplyee();
-																						if (!empList.isEmpty()) {
-																							for (EmployeeModel emp : empList) {
-																								if(emp.getPosition().equals("admin")){
-												%>
-												<tr>
-													<td><%=emp.getUserId()%></td>
-													<td><%=emp.getFirstName()%> <%=emp.getLastName()%></td>
-													<td><fmt:formatDate pattern="dd-MM-yyyy"
-															value="<%=emp.getDob()%>" /></td>
-													<td><%=emp.getPosition()%></td>
-													<%-- <td><%=emp.getPlant()%></td> --%>
-													<td><%=emp.getCountry()%></td>
-													<td><fmt:formatDate pattern="dd-MM-yyyy"
-															value="<%=emp.getJoining_date()%>" /></td>
-													<td><%=emp.getAddress()%> <%=emp.getState()%> (<%=emp.getCountry()%>)
-													
-												</tr>
-												<%
-																								}
-												}
-												}
-												%>
-											</tbody>
-
-										</table>
+													<div class="col-auto">
+														<div class="stat text-primary">
+															<i class="fa fa-line-chart" aria-hidden="true"></i>
+														</div>
+													</div>
+												</div>
+												<h1 class="mt-1 mb-3">2.382</h1>
+												<div class="mb-0">
+													<span class="text-danger"><i
+														class="align-middle me-2" data-feather="trending-down"></i>
+														<i class="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
+													<p class="text-muted">Since last week</p>
+												</div>
+											</div>
+										</div>
 									</div>
 
+									<div class="col-sm-3">
+										<div class="card critical">
+											<div class="card-body">
+												<div class="row">
+													<div class="col mt-0">
+														<h5 class="card-title">Critical</h5>
+													</div>
+
+													<div class="col-auto">
+														<div class="stat text-primary">
+															<i class="align-middle" data-feather="users"></i>
+														</div>
+													</div>
+												</div>
+												<h1 class="mt-1 mb-3 ">14.212</h1>
+												<div class="mb-0">
+													<span class="text-success"><i
+														class="align-middle me-2" data-feather="trending-up"></i>
+														<i class="mdi mdi-arrow-bottom-right"></i> 5.25% </span>
+													<p class="text-muted">Since last week</p>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div class="col-sm-3">
+										<div class="card">
+											<div class="card-body">
+												<div class="row">
+													<div class="col mt-0">
+														<h5 class="card-title">Pending</h5>
+													</div>
+
+													<div class="col-auto">
+														<div class="stat text-primary">
+															<i class="fa fa-inr" aria-hidden="true"></i>
+														</div>
+													</div>
+												</div>
+												<h1 class="mt-1 mb-3">
+													<i class="fa fa-inr" aria-hidden="true"></i>21.300
+												</h1>
+												<div class="mb-0">
+													<span class="text-success"><i
+														class="align-middle me-2" data-feather="trending-up"></i> <i
+														class="mdi mdi-arrow-bottom-right"></i> 6.65%
+													</span>
+													<p class="text-muted">Since last week</p>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-sm-3">
+										<div class="card">
+											<div class="card-body">
+												<div class="row">
+													<div class="col mt-0">
+														<h5 class="card-title">Closed</h5>
+													</div>
+
+													<div class="col-auto">
+														<div class="stat text-primary">
+															<i class="align-middle" data-feather="shopping-cart"></i>
+														</div>
+													</div>
+												</div>
+												<h1 class="mt-1 mb-3">64</h1>
+												<div class="mb-0">
+													<span class="text-danger"><i
+														class="align-middle me-2" data-feather="trending-down"></i> <i
+														class="mdi mdi-arrow-bottom-right"></i> -2.25%
+													</span>
+													<p class="text-muted">Since last week</p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-12 col-xxl-12">
+							 
+							<div class="card flex-fill w-100">
+								<div class="card-header">
+									<h5 class="card-title">Task Chart</h5>
+								</div>
+								<div class="card-body">
+									<div class="chart">
+										<canvas id="chartjs-line"></canvas>
+									</div>
+								</div>
+							</div>
+						 
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
+							<div class="card flex-fill w-100">
+								<div class="card-header">
+
+									<h5 class="card-title mb-0">Total Output</h5>
+								</div>
+								<div class="card-body d-flex">
+									<div class="align-self-center w-100">
+										<div class="py-3">
+											<div class="chart chart-xs">
+												<canvas id="chartjs-dashboard-pie"></canvas>
+											</div>
+										</div>
+
+										<table class="table mb-0">
+											<tbody>
+												<tr>
+													<td>Plant1</td>
+													<td class="text-end">4306</td>
+												</tr>
+												<tr>
+													<td>Plant2</td>
+													<td class="text-end">3801</td>
+												</tr>
+												<tr>
+													<td>Plant3</td>
+													<td class="text-end">1689</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+					</div>
+
+					<div class="row">
+						<div class="col-12 col-lg-8 col-xxl-9 d-flex">
+							<div class="card flex-fill">
+								<div class="card-header">
+
+									<h5 class="card-title mb-0">Ongoing Tasks</h5>
+								</div>
+								<table class="table table-hover my-0">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th class="d-none d-xl-table-cell">Start Date</th>
+											<th class="d-none d-xl-table-cell">End Date</th>
+											<th>Status</th>
+											<th class="d-none d-md-table-cell">Assignee</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Project Apollo</td>
+											<td class="d-none d-xl-table-cell">01/01/2023</td>
+											<td class="d-none d-xl-table-cell">31/06/2023</td>
+											<td><span class="badge bg-success">Done</span></td>
+											<td class="d-none d-md-table-cell">Vanessa Tucker</td>
+										</tr>
+										<tr>
+											<td>Project Fireball</td>
+											<td class="d-none d-xl-table-cell">01/01/2023</td>
+											<td class="d-none d-xl-table-cell">31/06/2023</td>
+											<td><span class="badge bg-danger">Cancelled</span></td>
+											<td class="d-none d-md-table-cell">William Harris</td>
+										</tr>
+										<tr>
+											<td>Project Hades</td>
+											<td class="d-none d-xl-table-cell">01/01/2023</td>
+											<td class="d-none d-xl-table-cell">31/06/2023</td>
+											<td><span class="badge bg-success">Done</span></td>
+											<td class="d-none d-md-table-cell">Sharon Lessman</td>
+										</tr>
+										<tr>
+											<td>Project Nitro</td>
+											<td class="d-none d-xl-table-cell">01/01/2023</td>
+											<td class="d-none d-xl-table-cell">31/06/2023</td>
+											<td><span class="badge bg-warning">In progress</span></td>
+											<td class="d-none d-md-table-cell">Vanessa Tucker</td>
+										</tr>
+										<tr>
+											<td>Project Phoenix</td>
+											<td class="d-none d-xl-table-cell">01/01/2023</td>
+											<td class="d-none d-xl-table-cell">31/06/2023</td>
+											<td><span class="badge bg-success">Done</span></td>
+											<td class="d-none d-md-table-cell">William Harris</td>
+										</tr>
+										<tr>
+											<td>Project X</td>
+											<td class="d-none d-xl-table-cell">01/01/2023</td>
+											<td class="d-none d-xl-table-cell">31/06/2023</td>
+											<td><span class="badge bg-success">Done</span></td>
+											<td class="d-none d-md-table-cell">Sharon Lessman</td>
+										</tr>
+										<tr>
+											<td>Project Romeo</td>
+											<td class="d-none d-xl-table-cell">01/01/2023</td>
+											<td class="d-none d-xl-table-cell">31/06/2023</td>
+											<td><span class="badge bg-success">Done</span></td>
+											<td class="d-none d-md-table-cell">Christina Mason</td>
+										</tr>
+										<tr>
+											<td>Project Wombat</td>
+											<td class="d-none d-xl-table-cell">01/01/2023</td>
+											<td class="d-none d-xl-table-cell">31/06/2023</td>
+											<td><span class="badge bg-warning">In progress</span></td>
+											<td class="d-none d-md-table-cell">William Harris</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="col-12 col-lg-4 col-xxl-3 d-flex">
+							<div class="card flex-fill w-100">
+								<div class="card-header">
+
+									<h5 class="card-title mb-0">Monthly Sales</h5>
+								</div>
+								<div class="card-body d-flex w-100">
+									<div class="align-self-center chart chart-lg">
+										<canvas id="chartjs-dashboard-bar"></canvas>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					
-					<div class="card">
-					    <div class="card-header">
-					        <strong class="h3 mb-3">Employee List</strong>
-					        <select id="adminDropdown" class="form-select">
-					            <option value="">Select Admin</option>
-					            <% for (EmployeeModel emp : empList) { %>
-					                <% if ("admin".equals(emp.getPosition())) { %>
-					                    <option value="<%= emp.getUserId() %>"><%= emp.getFirstName() %> <%= emp.getLastName() %></option>
-					                <% } %>
-					            <% } %>
-					        </select>
-					        
-					    </div>
-					</div>
-				<div class="card">
-						<div class="card-body">
-							<table id="employeeTable" class="display" style="width: 100%">
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Name</th>
-										<th>DOB</th>
-										<th>Position</th>
-										<th>Location</th>
-										<th>Start date</th>
-										<th>Address</th>
-									</tr>
-								</thead>
-								<tbody id="employeeTableBody">
-									<!-- Employee data will be inserted here -->
-									
-								</tbody>
-							</table>
-						</div>	
+
 				</div>
 			</main>
-			<!-- main container end -->
+
 
 			<jsp:include page="footer.jsp"></jsp:include>
 		</div>
 	</div>
 
-
-
 	<script src="./assets/js/app.js"></script>
 
-	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
-	<script
-		src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
-	<script
-		src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-	<script
-		src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-	<script
-		src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.colVis.min.js"></script>
-
-
-
+	 
 	<script>
-	$(document).ready(function() {
-        $('#adminDropdown').change(function() {
-            var adminId = $(this).val();
-            
-            $.ajax({
-                url: 'fetchEmployees',
-                type: 'GET',
-                data: {
-                    adminId: adminId
-                },
-                dataType: 'json',
-                success: function(data) {
-                    var tableBody = $('#employeeTableBody');
-                    tableBody.empty();
-                    $.each(data, function(index, emp) {
-                        var row = '<tr>' +
-                            '<td>' + emp.userId + '</td>' +
-                            '<td>' + emp.name + '</td>' +
-                            '<td>' + emp.dob + '</td>' +
-                            '<td>' + emp.position + '</td>' +
-                            '<td>' + emp.location + '</td>' +
-                            '<td>' + emp.startDate + '</td>' +
-                            '<td>' + emp.address + '</td>' +
-                            '</tr>';
-                        tableBody.append(row);
-                    });
-                    $('#employeeTable').DataTable().draw();    
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX error: ' + status + ' - ' + error);
-                }
-            });
-        });
-        
-        new DataTable(
-				'#example',
+		document.addEventListener("DOMContentLoaded", function() {
+			// Pie chart
+			new Chart(document.getElementById("chartjs-dashboard-pie"), {
+				type: "pie",
+				data: {
+					labels: ["Plant1", "Plant2", "Plant3"],
+					datasets: [{
+						data: [4306, 3801, 1689],
+						backgroundColor: [
+							window.theme.primary,
+							window.theme.warning,
+							window.theme.danger
+						],
+						borderWidth: 5
+					}]
+				},
+				options: {
+					responsive: !window.MSInputMethodContext,
+					maintainAspectRatio: false,
+					legend: {
+						display: false
+					},
+					cutoutPercentage: 75
+				}
+			});
+		});
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			// Bar chart
+			new Chart(document.getElementById("chartjs-dashboard-bar"), {
+				type: "bar",
+				data: {
+					labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+					datasets: [{
+						label: "This year",
+						backgroundColor: window.theme.primary,
+						borderColor: window.theme.primary,
+						hoverBackgroundColor: window.theme.primary,
+						hoverBorderColor: window.theme.primary,
+						data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
+						barPercentage: .75,
+						categoryPercentage: .5
+					}]
+				},
+				options: {
+					maintainAspectRatio: false,
+					legend: {
+						display: false
+					},
+					scales: {
+						yAxes: [{
+							gridLines: {
+								display: false
+							},
+							stacked: false,
+							ticks: {
+								stepSize: 20
+							}
+						}],
+						xAxes: [{
+							stacked: false,
+							gridLines: {
+								color: "transparent"
+							}
+						}]
+					}
+				}
+			});
+		});
+	 
+		document.addEventListener("DOMContentLoaded", function() {
+			var markers = [{
+					coords: [31.230391, 121.473701],
+					name: "Shanghai"
+				},
 				{
-					layout : {
-						topStart : {
-							buttons : [ {
-								extend : 'collection',
-								className : 'custom-html-collection',
-								buttons : [
-										'<h3>Export</h3>',
-										'pdf',
-										'csv',
-										'excel',
-										'<h3 class="not-top-heading">Column Visibility</h3>',
-										'columnsToggle' ]
-							} ]
-						}
+					coords: [28.704060, 77.102493],
+					name: "Delhi"
+				},
+				{
+					coords: [6.524379, 3.379206],
+					name: "Lagos"
+				},
+				{
+					coords: [35.689487, 139.691711],
+					name: "Tokyo"
+				},
+				{
+					coords: [23.129110, 113.264381],
+					name: "Guangzhou"
+				},
+				{
+					coords: [40.7127837, -74.0059413],
+					name: "New York"
+				},
+				{
+					coords: [34.052235, -118.243683],
+					name: "Los Angeles"
+				},
+				{
+					coords: [41.878113, -87.629799],
+					name: "Chicago"
+				},
+				{
+					coords: [51.507351, -0.127758],
+					name: "London"
+				},
+				{
+					coords: [40.416775, -3.703790],
+					name: "Madrid "
+				}
+			];
+			var map = new jsVectorMap({
+				map: "world",
+				selector: "#world_map",
+				zoomButtons: true,
+				markers: markers,
+				markerStyle: {
+					initial: {
+						r: 9,
+						strokeWidth: 7,
+						stokeOpacity: .4,
+						fill: window.theme.primary
+					},
+					hover: {
+						fill: window.theme.primary,
+						stroke: window.theme.primary
 					}
-				});
-		/* new DataTable(
-				'#employeeTable',
-				{	
-					layout : {
-						topStart : {
-							buttons : [ {
-								extend : 'collection',
-								className : 'custom-html-collection',
-								buttons : [
-										'<h3>Export</h3>',
-										'pdf',
-										'csv',
-										'excel',
-										'<h3 class="not-top-heading">Column Visibility</h3>',
-										'columnsToggle' ]
-							} ]
+				},
+				zoomOnScroll: false
+			});
+			window.addEventListener("resize", () => {
+				map.updateSize();
+			});
+		});
+	 
+		document.addEventListener("DOMContentLoaded", function() {
+			var date = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
+			var defaultDate = date.getUTCFullYear() + "-" + (date.getUTCMonth() + 1) + "-" + date.getUTCDate();
+			document.getElementById("datetimepicker-dashboard").flatpickr({
+				inline: true,
+				prevArrow: "<span title=\"Previous month\">&laquo;</span>",
+				nextArrow: "<span title=\"Next month\">&raquo;</span>",
+				defaultDate: defaultDate
+			});
+		});
+		
+		
+		document.addEventListener("DOMContentLoaded", function() {
+			// Line chart
+			new Chart(document.getElementById("chartjs-line"), {
+				type: "line",
+				data: {
+					labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+					datasets: [{
+						label: "Plant 1",
+						fill: true,
+						backgroundColor: "transparent",
+						borderColor: window.theme.success,
+						data: [2115, 1562, 1584, 1892, 1487, 2223, 2966, 2448, 2905, 3838, 2917, 3327]
+					}, {
+						label: "Plant 2",
+						fill: true,
+						backgroundColor: "transparent",
+						borderColor: window.theme.danger,
+						borderDash: [4, 0],
+						data: [958, 724, 629, 883, 915, 1214, 1476, 1212, 1554, 2128, 1466, 1827]
+					},{
+						label: "Plant 3",
+						fill: true,
+						backgroundColor: "transparent",
+						borderColor: window.theme.primary,
+						borderDash: [4, 0],
+						data: [850, 704, 129, 883, 1115, 1014, 1776, 1112, 1604, 2528, 2466, 2827]
+					}]
+				},
+				options: {
+					maintainAspectRatio: false,
+					legend: {
+						display: false
+					},
+					tooltips: {
+						intersect: false
+					},
+					hover: {
+						intersect: true
+					},
+					plugins: {
+						filler: {
+							propagate: false
 						}
+					},
+					scales: {
+						xAxes: [{
+							reverse: true,
+							gridLines: {
+								color: "rgba(0,0,0,0.05)"
+							}
+						}],
+						yAxes: [{
+							ticks: {
+								stepSize: 500
+							},
+							display: true,
+							borderDash: [5, 5],
+							gridLines: {
+								color: "rgba(0,0,0,0)",
+								fontColor: "#fff"
+							}
+						}]
 					}
-				}); */
-       
-    });
-
+				}
+			});
+		});
 	</script>
 
 </body>

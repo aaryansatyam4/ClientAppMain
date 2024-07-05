@@ -18,7 +18,7 @@
 <meta name="author" content="AdminKit">
 <meta name="keywords"
 	content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
-	
+
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link rel="shortcut icon" href="./assets/img/icons/icon-48x48.png" />
 <link rel="canonical" href="https://demo-basic.adminkit.io/" />
@@ -42,44 +42,76 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <script>
-	document.addEventListener("DOMContentLoaded", function() {
-		// Edit Modal
-		var editModal = document.getElementById("editModal");
-		var editIcon = document.getElementById("editIcon");
-		var editClose = editModal.querySelector(".close");
+	document
+			.addEventListener(
+					"DOMContentLoaded",
+					function() {
+						// Edit Modal
+						var editModal = document.getElementById("editModal");
+						var editIcon = document.getElementById("editIcon");
+						var editClose = editModal.querySelector(".close");
 
-		editIcon.onclick = function() {
-			editModal.style.display = "block";
-		}
+						editIcon.onclick = function() {
+							editModal.style.display = "block";
+						}
 
-		editClose.onclick = function() {
-			editModal.style.display = "none";
-		}
+						editClose.onclick = function() {
+							editModal.style.display = "none";
+						}
 
-		// Password Modal
-		var passwordModal = document.getElementById("passwordModal");
-		var passwordBtn = document.getElementById("passwordbtn");
-		var passwordClose = passwordModal.querySelector(".close");
+						// Password Modal
+						var passwordModal = document
+								.getElementById("passwordModal");
+						var passwordBtn = document
+								.getElementById("passwordbtn");
+						var passwordClose = passwordModal
+								.querySelector(".close");
 
-		passwordBtn.onclick = function() {
-			passwordModal.style.display = "block";
-		}
+						passwordBtn.onclick = function() {
+							passwordModal.style.display = "block";
+						}
 
-		passwordClose.onclick = function() {
-			passwordModal.style.display = "none";
-		}
+						passwordClose.onclick = function() {
+							passwordModal.style.display = "none";
+						}
 
-		// Close modals when clicking outside
-		window.onclick = function(event) {
-			if (event.target == editModal) {
-				editModal.style.display = "none";
-			}
-			if (event.target == passwordModal) {
-				passwordModal.style.display = "none";
-			}
-		}
-	});
+						// Close modals when clicking outside
+						window.onclick = function(event) {
+							if (event.target == editModal) {
+								editModal.style.display = "none";
+							}
+							if (event.target == passwordModal) {
+								passwordModal.style.display = "none";
+							}
+						}
+
+						// Phone number validation
+						var phoneNumberInput = document
+								.getElementById("contact_no");
+						phoneNumberInput
+								.addEventListener(
+										"input",
+										function() {
+											var phoneNumber = phoneNumberInput.value
+													.trim();
+											var isValid = /^\d{10}$/
+													.test(phoneNumber); // Regex for 10 digits only
+
+											if (!isValid) {
+												phoneNumberInput.classList
+														.add("is-invalid");
+												document
+														.getElementById("phoneError").textContent = "Enter a valid 10-digit phone number.";
+											} else {
+												phoneNumberInput.classList
+														.remove("is-invalid");
+												document
+														.getElementById("phoneError").textContent = "";
+											}
+										});
+					});
 </script>
+
 
 
 <Style>
@@ -311,7 +343,7 @@ body {
 /* Edit modal specific styles */
 #editModal .modal-content {
 	background-color: #fefefe;
-	margin: 15% auto;
+	margin: 7% auto;
 	padding: 20px;
 	border: 1px solid #888;
 	width: 80%; /* Adjust width as needed */
@@ -434,219 +466,388 @@ body {
 			<jsp:include page="nav.jsp"></jsp:include>
 
 			<div class="main-body">
-				<div class="heading">
-					<h1>Employee Dashboard</h1>
-					<div class="edit-icon-container">
-						<i class="fas fa-edit edit-icon" id="editIcon"></i>
-					</div>
 
-				</div>
-
+<div class="check">
+    <p>User ID: <span id="userId"></span></p>
+    <p>First Name: <span id="firstName"></span></p>
+    <input type="text" id="userid" placeholder="Enter User ID">
+<button onclick="getuserDetails()">Get User Details</button>
+    
+</div>
 				<div class="row gutters-sm">
-					<div class="col-md-4 mb-3">
-						<div class="card">
-							<div class="card-body">
-								<div class="d-flex flex-column align-items-center text-center">
-									<img src="https://bootdey.com/img/Content/avatar/avatar7.png"
-										alt="Admin" class="rounded-circle" width="150">
-									<div class="mt-3">
-										<h4><%=username%></h4>
-										<p class="text-secondary mb-1"><%=user != null ? user.getPosition() : "Guest"%></p>
-										<p class="text-muted font-size-sm"><%=user != null ? user.getState() + ", " + user.getCountry() : "Guest"%></p>
-										<button class="btn btn-info" id="passwordbtn">Change
-											Password</button>
-										<button class="btn btn-outline-primary">Message</button>
-									</div>
+
+
+					<div class="card mb-3">
+						<div class="card-body">
+							<div class="edit-icon-container">
+								<i class="fas fa-edit edit-icon" id="editIcon"></i>
+							</div>
+							<div class="d-flex flex-column align-items-center text-center">
+								<img src="https://bootdey.com/img/Content/avatar/avatar7.png"
+									alt="Admin" class="rounded-circle" width="150">
+								<div class="mt-3">
+									<h4><%=username%></h4>
+
+
+									<button class="btn btn-info" id="passwordbtn">Change
+										Password</button>
+									<button class="btn btn-outline-primary">Message</button>
 								</div>
 							</div>
 						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-sm-3">
+									<h6 class="mb-0">Employee Name</h6>
+								</div>
+								<div class="col-sm-9 text-secondary"><%=user != null ? user.getFirstName() + " " + user.getLastName() : "Guest"%></div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<h6 class="mb-0">Position</h6>
+								</div>
+								<div class="col-sm-9 text-secondary"><%=user != null ? user.getPosition() : "Guest"%></div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<h6 class="mb-0">Email</h6>
+								</div>
+								<div class="col-sm-9 text-secondary"><%=user != null ? user.getEmail() : "Guest"%></div>
+							</div>
+
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<h6 class="mb-0">Mobile</h6>
+								</div>
+								<div class="col-sm-9 text-secondary"><%=user != null ? user.getContact_no() : "Guest"%></div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<h6 class="mb-0">Address</h6>
+								</div>
+								<div class="col-sm-9 text-secondary"><%=user != null
+		? user.getAddress() + ", " + user.getCity() + ", " + user.getState() + ", " + user.getCountry()
+		: "Guest"%></div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<h6 class="mb-0">Department</h6>
+								</div>
+								<div class="col-sm-9 text-secondary"><%=user != null ? user.getDepartment() : "Guest"%></div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<h6 class="mb-0">Joining Date</h6>
+								</div>
+								<div class="col-sm-9 text-secondary"><%=user != null ? user.getJoining_date() : "Guest"%></div>
+							</div>
+							<hr>
+						</div>
 					</div>
 
-					<div class="col-md-8">
-						 <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Full Name</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary"><%= user != null ? user.getFirstName() + " " + user.getLastName() : "Guest" %></div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Email</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary"><%= user != null ? user.getEmail() : "Guest" %></div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Position</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary"><%= user != null ? user.getPosition() : "Guest" %></div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Mobile</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary"><%= user != null ? user.getContact_no() : "Guest" %></div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Address</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary"><%= user != null ? user.getAddress() + ", " + user.getCity() + ", " + user.getState() + ", " + user.getCountry() : "Guest" %></div>
-                            </div>
-                            <hr>
-                            
-                        </div>
-                    </div>
 
+					<!-- Edit Modal -->
+					<!-- Edit Modal -->
+					<div id="editModal" class="modal">
+						<div class="modal-content">
+							<span class="close">&times;</span>
+							<h2>Edit Profile</h2>
+							<form action="updateProfile" method="post">
+								<input type="hidden" name="userId"
+									value="<%=user != null ? user.getUserId() : ""%>">
+
+								<div class="form-row">
+									<div class="form-group col-md-6">
+										<label for="firstName">First Name:</label> <input type="text"
+											class="form-control" id="firstName" name="firstName"
+											value="<%=user != null ? user.getFirstName() : ""%>">
+									</div>
+									<div class="form-group col-md-6">
+										<label for="lastName">Last Name:</label> <input type="text"
+											class="form-control" id="lastName" name="lastName"
+											value="<%=user != null ? user.getLastName() : ""%>">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="email">Email:</label> <input type="email"
+										class="form-control" id="email" name="email"
+										value="<%=user != null ? user.getEmail() : ""%>">
+								</div>
+
+								<div class="form-group">
+									<label for="contact_no">Mobile:</label> <input type="text"
+										class="form-control" id="contact_no" name="contact_no"
+										value="<%=user != null ? user.getContact_no() : ""%>"
+										required>
+									<div class="invalid-feedback" id="phoneError"></div>
+								</div>
+
+
+								<div class="form-row">
+									<div class="form-group col-md-6">
+										<label for="address">Address:</label> <input type="text"
+											class="form-control" id="address" name="address"
+											value="<%=user != null ? user.getAddress() : ""%>">
+									</div>
+									<div class="form-group col-md-3">
+										<label for="city">City:</label> <input type="text"
+											class="form-control" id="city" name="city"
+											value="<%=user != null ? user.getCity() : ""%>">
+									</div>
+
+								</div>
+								<div class="form-row">
+									<div class="form-group col-md-6">
+										<label for="state">State:</label> <select class="form-control"
+											id="state" name="state">
+
+											<option value="Andhra Pradesh"
+												<%="Andhra Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Andhra
+												Pradesh</option>
+											<option value="Arunachal Pradesh"
+												<%="Arunachal Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Arunachal
+												Pradesh</option>
+											<option value="Assam"
+												<%="Assam".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Assam</option>
+											<option value="Bihar"
+												<%="Bihar".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Bihar</option>
+											<option value="Chhattisgarh"
+												<%="Chhattisgarh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Chhattisgarh</option>
+											<option value="Goa"
+												<%="Goa".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Goa</option>
+											<option value="Gujarat"
+												<%="Gujarat".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Gujarat</option>
+											<option value="Haryana"
+												<%="Haryana".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Haryana</option>
+											<option value="Himachal Pradesh"
+												<%="Himachal Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Himachal
+												Pradesh</option>
+											<option value="Jharkhand"
+												<%="Jharkhand".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Jharkhand</option>
+											<option value="Karnataka"
+												<%="Karnataka".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Karnataka</option>
+											<option value="Kerala"
+												<%="Kerala".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Kerala</option>
+											<option value="Madhya Pradesh"
+												<%="Madhya Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Madhya
+												Pradesh</option>
+											<option value="Maharashtra"
+												<%="Maharashtra".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Maharashtra</option>
+											<option value="Manipur"
+												<%="Manipur".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Manipur</option>
+											<option value="Meghalaya"
+												<%="Meghalaya".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Meghalaya</option>
+											<option value="Mizoram"
+												<%="Mizoram".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Mizoram</option>
+											<option value="Nagaland"
+												<%="Nagaland".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Nagaland</option>
+											<option value="Odisha"
+												<%="Odisha".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Odisha</option>
+											<option value="Punjab"
+												<%="Punjab".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Punjab</option>
+											<option value="Rajasthan"
+												<%="Rajasthan".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Rajasthan</option>
+											<option value="Sikkim"
+												<%="Sikkim".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Sikkim</option>
+											<option value="Tamil Nadu"
+												<%="Tamil Nadu".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Tamil
+												Nadu</option>
+											<option value="Telangana"
+												<%="Telangana".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Telangana</option>
+											<option value="Tripura"
+												<%="Tripura".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Tripura</option>
+											<option value="Uttar Pradesh"
+												<%="Uttar Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Uttar
+												Pradesh</option>
+											<option value="Uttarakhand"
+												<%="Uttarakhand".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Uttarakhand</option>
+											<option value="West Bengal"
+												<%="West Bengal".equals(user != null ? user.getState() : "") ? "selected" : ""%>>West
+												Bengal</option>
+										</select>
+
+									</div>
+									<div class="form-group col-md-6">
+										<label for="country">Country:</label> <select
+											class="form-control" id="country" name="country">
+											<option value="India"
+												<%="India".equals(user != null ? user.getCountry() : "") ? "selected" : ""%>>India</option>
+
+											<!-- Add other options as needed -->
+										</select>
+									</div>
+								</div>
+
+
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</form>
+						</div>
 					</div>
+
+					<div id="passwordModal" class="modal">
+						<div class="modal-content">
+							<span class="close">&times;</span>
+							<h2>Change Password</h2>
+							<form action="changePassword" method="post"
+								id="changePasswordForm">
+								<input type="hidden" name="userId"
+									value="<%=user != null ? user.getUserId() : ""%>">
+
+								<div class="form-group">
+									<label for="currentPassword">Current Password:</label> <input
+										type="password" class="form-control" id="currentPassword"
+										name="currentPassword" required>
+								</div>
+								<div class="form-group">
+									<label for="newPassword">New Password:</label> <input
+										type="password" class="form-control" id="newPassword"
+										name="newPassword" required>
+									<div id="newPasswordError" class="error-message"></div>
+								</div>
+								<div class="form-group">
+									<label for="confirmPassword">Confirm Password:</label> <input
+										type="password" class="form-control" id="confirmPassword"
+										name="confirmPassword" required>
+									<div id="confirmPasswordError" class="error-message"></div>
+								</div>
+
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</form>
+						</div>
+					</div>
+
+
+
+
+
+
+
 				</div>
 			</div>
+			
+			
+			
+			
+			<script>
+			
+			var url = "http://localhost:8080/v1";
+			
+			
+			function getuserDetails() {
+			    var userId = document.getElementById("userid").value; // Assuming "userid" is an input field where the user ID is entered
+			    
+			    $.ajax({
+			        url: url + '/api/login/details',
+			        method: 'GET',
+			        data: { userId: userId },
+			        success: function (response) {
+			            $("#userId").text(response.id);
+			            $("#firstName").text(response.firstName);
+			            $(".check").show(); // Assuming you want to make the check div visible when data is fetched
+			        },
+			        error: function (xhr, status, error) {
+			            console.error("Error fetching user details:", error);
+			        }
+			    });
+			}
 
-			<!-- Edit Modal -->
-			<!-- Edit Modal -->
-			<div id="editModal" class="modal">
-				<div class="modal-content">
-					<span class="close">&times;</span>
-					<h2>Edit Profile</h2>
-					<form action="updateProfile" method="post">
-						<input type="hidden" name="userId"
-							value="<%=user != null ? user.getUserId() : ""%>">
+			
+			
+			
+				document
+						.getElementById("changePasswordForm")
+						.addEventListener(
+								"submit",
+								function(event) {
+									event.preventDefault(); // Prevent form submission
 
-						<div class="form-row">
-							<div class="form-group col-md-6">
-								<label for="firstName">First Name:</label> <input type="text"
-									class="form-control" id="firstName" name="firstName"
-									value="<%=user != null ? user.getFirstName() : ""%>">
-							</div>
-							<div class="form-group col-md-6">
-								<label for="lastName">Last Name:</label> <input type="text"
-									class="form-control" id="lastName" name="lastName"
-									value="<%=user != null ? user.getLastName() : ""%>">
-							</div>
-						</div>
+									var newPassword = document
+											.getElementById("newPassword").value;
+									var confirmPassword = document
+											.getElementById("confirmPassword").value;
 
-						<div class="form-group">
-							<label for="email">Email:</label> <input type="email"
-								class="form-control" id="email" name="email"
-								value="<%=user != null ? user.getEmail() : ""%>">
-						</div>
+									if (newPassword !== confirmPassword) {
+										document
+												.getElementById("newPasswordError").textContent = "Passwords do not match.";
+										document
+												.getElementById("confirmPasswordError").textContent = "Passwords do not match.";
+									} else {
+										// Reset error messages if passwords match
+										document
+												.getElementById("newPasswordError").textContent = "";
+										document
+												.getElementById("confirmPasswordError").textContent = "";
 
-						<div class="form-group">
-							<label for="contact_no">Mobile:</label> <input type="text"
-								class="form-control" id="contact_no" name="contact_no"
-								value="<%=user != null ? user.getContact_no() : ""%>">
-						</div>
+										// Submit form
+										this.submit();
+									}
+								});
+			</script>
+			<script>
+				document
+						.addEventListener(
+								"DOMContentLoaded",
+								function() {
+									// Phone number validation
+									var phoneInput = document
+											.getElementById("contact_no");
+									var form = document
+											.getElementById("profileForm"); // Replace "profileForm" with your form ID
 
-						<div class="form-row">
-							<div class="form-group col-md-6">
-								<label for="address">Address:</label> <input type="text"
-									class="form-control" id="address" name="address"
-									value="<%=user != null ? user.getAddress() : ""%>">
-							</div>
-							<div class="form-group col-md-3">
-								<label for="city">City:</label> <input type="text"
-									class="form-control" id="city" name="city"
-									value="<%=user != null ? user.getCity() : ""%>">
-							</div>
+									phoneInput.addEventListener("input",
+											function() {
+												validatePhoneNumber();
+											});
 
-						</div>
-						<div class="form-row">
-							<div class="form-group col-md-6">
-								<label for="state">State:</label> <input type="text"
-									class="form-control" id="state" name="state"
-									value="<%=user != null ? user.getState() : ""%>">
-							</div>
-							<div class="form-group col-md-6">
-								<label for="country">Country:</label> <select
-									class="form-control" id="country" name="country">
-									<option value="India"
-										<%="India".equals(user != null ? user.getCountry() : "") ? "selected" : ""%>>India</option>
-									<option value="USA"
-										<%="USA".equals(user != null ? user.getCountry() : "") ? "selected" : ""%>>USA</option>
-									<!-- Add other options as needed -->
-								</select>
-							</div>
-						</div>
+									phoneInput.addEventListener("blur",
+											function() {
+												validatePhoneNumber();
+											});
 
+									function validatePhoneNumber() {
+										var phoneNumber = phoneInput.value
+												.trim();
+										var errorElement = document
+												.getElementById("phoneError");
 
-						<button type="submit" class="btn btn-primary">Submit</button>
-					</form>
-				</div>
-			</div>
+										if (!/^\d{10}$/.test(phoneNumber)) {
+											errorElement.textContent = "Phone number must be 10 digits";
+											phoneInput.classList
+													.add("is-invalid");
+										} else {
+											errorElement.textContent = "";
+											phoneInput.classList
+													.remove("is-invalid");
+										}
+									}
 
-			<div id="passwordModal" class="modal">
-				<div class="modal-content">
-					<span class="close">&times;</span>
-					<h2>Change Password</h2>
-					<form action="changePassword" method="post" id="changePasswordForm">
-						<input type="hidden" name="userId"
-							value="<%=user != null ? user.getUserId() : ""%>">
+									// Prevent form submission if phone number is invalid
+									form.addEventListener("submit", function(
+											event) {
+										if (!isValidPhoneNumber()) {
+											event.preventDefault(); // Prevent form submission
+											validatePhoneNumber(); // Validate and show error message
+										}
+									});
 
-						<div class="form-group">
-							<label for="currentPassword">Current Password:</label> <input
-								type="password" class="form-control" id="currentPassword"
-								name="currentPassword" required>
-						</div>
-						<div class="form-group">
-							<label for="newPassword">New Password:</label> <input
-								type="password" class="form-control" id="newPassword"
-								name="newPassword" required>
-							<div id="newPasswordError" class="error-message"></div>
-						</div>
-						<div class="form-group">
-							<label for="confirmPassword">Confirm Password:</label> <input
-								type="password" class="form-control" id="confirmPassword"
-								name="confirmPassword" required>
-							<div id="confirmPasswordError" class="error-message"></div>
-						</div>
-
-						<button type="submit" class="btn btn-primary">Submit</button>
-					</form>
-				</div>
-			</div>
+									// Function to check if phone number is valid
+									function isValidPhoneNumber() {
+										var phoneNumber = phoneInput.value
+												.trim();
+										return /^\d{10}$/.test(phoneNumber);
+									}
+								});
+			</script>
 
 
-
-
-
-
-
-		</div>
-	</div>
-	<script>
-		document
-				.getElementById("changePasswordForm")
-				.addEventListener(
-						"submit",
-						function(event) {
-							event.preventDefault(); // Prevent form submission
-
-							var newPassword = document
-									.getElementById("newPassword").value;
-							var confirmPassword = document
-									.getElementById("confirmPassword").value;
-
-							if (newPassword !== confirmPassword) {
-								document.getElementById("newPasswordError").textContent = "Passwords do not match.";
-								document.getElementById("confirmPasswordError").textContent = "Passwords do not match.";
-							} else {
-								// Reset error messages if passwords match
-								document.getElementById("newPasswordError").textContent = "";
-								document.getElementById("confirmPasswordError").textContent = "";
-
-								// Submit form
-								this.submit();
-							}
-						});
-	</script>
-	<script src="./assets/js/app.js"></script>
-	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-
+			<script src="./assets/js/app.js"></script>
+			<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 </body>
 </html>

@@ -158,6 +158,19 @@
     to { transform: translateY(0); opacity: 1; }
 }
 
+      /* Example: Override row selection background */
+table.dataTable > tbody > tr.selected > * {
+  box-shadow: inset 0 0 0 9999px rgba(255, 0, 0, 0.5); /* Custom background color */
+}
+
+/* Example: Override header styles */
+table.dataTable th {
+  background-color: #f0f0f0; /* Custom header background color */
+  color: #333; /* Custom header text color */
+}
+.textc{
+color:#72A0C1;
+}
       
     </style>
 </head>
@@ -196,7 +209,7 @@
                                            <tbody>
     <% for (TicketsModel ticket : assignedTickets) { %>
         <tr>
-            <td class="taskId" 
+            <td class="taskId textc" 
                 data-task-id="<%= ticket.getId() %>"
                 data-description="<%= ticket.getTicketDescription() %>"
                 data-severity="<%= ticket.getSeverity() %>"
@@ -239,7 +252,7 @@
         <table>
             <tr>
                 <th>Ticket ID</th>
-                <td id="ticketId"></td>
+                <td id="ticketId" ></td>>
             </tr>
             <tr>
                 <th>Task Name</th>

@@ -32,6 +32,10 @@
     Long totalTicketsCount = 0L; // To count the total number of tickets
     Long pendingTicketsCount = 0L; // To count the number of pending tickets
     long[] monthlyCompletedCounts = new long[12];
+    List<TicketsModel> completedTickets = new ArrayList<>();
+    List<TicketsModel> highSeverityTickets = new ArrayList<>();
+    List<TicketsModel> mediumSeverityTickets = new ArrayList<>();
+    List<TicketsModel> lowSeverityTickets = new ArrayList<>();
     
     try {
         transaction = hibernateSession.beginTransaction();
@@ -81,6 +85,46 @@
             long count = (Long) result[1];
             monthlyCompletedCounts[month] = count;
         }
+        
+     // Query the completed tickets
+       highSeverityTickets = hibernateSession.createQuery(
+            "FROM TicketsModel WHERE severity = 'high' AND assignee = :username"
+        ).setParameter("username", username).list();
+     
+       mediumSeverityTickets = hibernateSession.createQuery(
+               "FROM TicketsModel WHERE severity = 'medium' AND assignee = :username"
+           ).setParameter("username", username).list();
+       
+       lowSeverityTickets = hibernateSession.createQuery(
+               "FROM TicketsModel WHERE severity = 'low' AND assignee = :username"
+           ).setParameter("username", username).list();
+     
+     
+     
+     
+     
+       completedTickets = hibernateSession.createQuery(
+               "FROM TicketsModel WHERE status = 'Completed' AND assignee = :username"
+           ).setParameter("username", username).list();
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+
+        // Log the size of completedTickets to verify data retrieval
+        System.out.println("Completed Tickets Count: " + completedTickets.size());
+
+        // Assign completedTickets to request attribute for JSP rendering
+        request.setAttribute("completedTickets", completedTickets);
+
         
         
         
@@ -202,6 +246,77 @@
     background-color: lightblue;
     
 }
+
+/* Modal styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 70%%; /* Full height */
+  overflow: auto; /* Enable scrolling if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 0% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Form styles */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-select, .form-control {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+}
+
+.form-select:focus, .form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
  
     </style>
 </head>
@@ -217,7 +332,7 @@
                     <div class="row">
                     
                      <div class="col-md-3 col-sm-6 mb-3">
-                            <div class="card">
+                            <div class="card" onclick="openCompletedTasksPopup()">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
@@ -232,6 +347,7 @@
                             </div>
                         </div>
                          <div class="col-md-3 col-sm-6 mb-3">
+                         <a href="#ongoing">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
@@ -246,8 +362,10 @@
                                     </div>
                                 </div>
                             </div>
+                            </a>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
+                        <a href="task.jsp">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
@@ -262,6 +380,7 @@
                                     </div>
                                 </div>
                             </div>
+                            </a>
                         </div>
                         
                         <div class="col-md-3 col-sm-6 mb-3">
@@ -283,7 +402,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3 col-sm-6 mb-3">
-                            <div class="card">
+                            <div class="card" onclick="openHighSeverityTasksPopup()">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
@@ -298,7 +417,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
-                            <div class="card">
+                            <div class="card" onclick="openMediumSeverityTasksPopup()">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
@@ -318,7 +437,7 @@
                          
                         
                         <div class="col-md-3 col-sm-6 mb-3">
-                            <div class="card">
+                            <div class="card" onclick="openLowSeverityTasksPopup()">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
@@ -368,7 +487,7 @@
     <div class="col-xl-12 col-xxl-12 d-flex">
         <div class="card flex-fill w-100">
             <div class="card-header">
-                <h5 class="card-title">ONGOING TASKS</h5>
+                <h5 class="card-title" id="ongoing">ONGOING TASKS</h5>
             </div>
             <div class="card-body">
                 <table class="table table-hover my-0">
@@ -425,33 +544,38 @@
                     
 
                     <%-- The Modal --%>
+                    
+
+                    
+                    
+                    
+<!-- The Modal -->
 <div id="ticketModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <form method="post" action="ticketAction">
-            <input type="hidden" name="ticketId" id="ticketId">
-            <div class="form-group">
-                <label for="action">Action</label>
-                <select name="action" id="action" class="form-control" onchange="handleActionChange()">
-                    <option value="completed">Mark as Completed</option>
-                    <option value="transfer">Transfer to</option>
-                </select>
-            </div>
-            <div class="form-group" id="transferToGroup" style="display:none;">
-                <label for="transferTo">Transfer To</label>
-                <select name="transferTo" id="transferTo" class="form-control">
-                    <% for (EmployeeModel user : users) { %>
-                        <option value="<%= user.getUserId() %>"><%= user.getFirstName() %></option>
-                    <% } %>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="remarks">Remarks</label>
-                <textarea name="remarks" id="remarks" class="form-control"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form method="post" action="ticketAction">
+      <input type="hidden" name="ticketId" id="ticketId">
+      <div class="form-group mb-3">
+        <label for="action" class="form-label">Action</label>
+        <select name="action" id="action" class="form-select" onchange="handleActionChange()">
+          <option value="completed">Mark as Completed</option>
+        </select>
+      </div>
+      <div class="form-group mb-3" id="transferToGroup" style="display:none;">
+        <label for="transferTo" class="form-label">Transfer To</label>
+        <select name="transferTo" id="transferTo" class="form-select">
+          <% for (EmployeeModel user : users) { %>
+            <option value="<%= user.getUserId() %>"><%= user.getFirstName() %></option>
+          <% } %>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea name="remarks" id="remarks" class="form-control"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
 </div>
 
 <script>
@@ -480,6 +604,209 @@
             transferToGroup.style.display = "block";
         } else {
             transferToGroup.style.display = "none";
+        }
+    }
+</script>
+<!-- Completed Tasks Modal -->
+ <div id="completedTasksModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCompletedTasksPopup()">&times;</span>
+            <h2>Completed Tasks</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th> 
+                        <th>Severity</th>
+                        <th>Completed At</th>
+                        <th>Manager</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (TicketsModel ticket : completedTickets) { %>
+                        <tr>
+                            <td><%= ticket.getId() %></td>
+                            <td><%= ticket.getSeverity() %></td>
+                            <td><%= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ticket.getCompletedAt()) %></td>
+                            <td><%= ticket.getManager() %></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+<!-- High Severity Tasks Modal -->
+<div id="highSeverityTasksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeSeverityTasksPopup('high')">&times;</span>
+        <h2>High Severity Tasks</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Severity</th>
+                    <th>Task Name</th>
+                    <th>Manager</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (TicketsModel ticket : highSeverityTickets) { %>
+                    <tr>
+                        <td><%= ticket.getId() %></td>
+                        <td><%= ticket.getSeverity() %></td>
+                        <td><%= ticket.getTicketName() %></td>
+                        <td><%= ticket.getManager() %></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Medium Severity Tasks Modal -->
+<div id="mediumSeverityTasksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeSeverityTasksPopup('medium')">&times;</span>
+        <h2>Medium Severity Tasks</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Severity</th>
+                   <th>Task Name</th>
+                    <th>Manager</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (TicketsModel ticket : highSeverityTickets) { %>
+                    <tr>
+                        <td><%= ticket.getId() %></td>
+                        <td><%= ticket.getSeverity() %></td>
+                        <td><%= ticket.getTicketName() %></td>
+                        <td><%= ticket.getManager() %></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Low Severity Tasks Modal -->
+<div id="lowSeverityTasksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeSeverityTasksPopup('low')">&times;</span>
+        <h2>Low Severity Tasks</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Severity</th>
+                    <th>Task Name</th>
+                    <th>Manager</th>
+                </tr>
+            </thead>
+            <tbody>
+               <% for (TicketsModel ticket : highSeverityTickets) { %>
+                    <tr>
+                        <td><%= ticket.getId() %></td>
+                        <td><%= ticket.getSeverity() %></td>
+                        <td><%= ticket.getTicketName() %></td>
+                        <td><%= ticket.getManager() %></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    // Function to open the High Severity Tasks popup
+    function openHighSeverityTasksPopup() {
+        var modal = document.getElementById("highSeverityTasksModal");
+        modal.style.display = "block";
+    }
+
+    // Function to close the High Severity Tasks popup
+    function closeSeverityTasksPopup(severity) {
+        var modal = document.getElementById(severity + "SeverityTasksModal");
+        modal.style.display = "none";
+    }
+
+    // Function to open the Medium Severity Tasks popup
+    function openMediumSeverityTasksPopup() {
+        var modal = document.getElementById("mediumSeverityTasksModal");
+        modal.style.display = "block";
+    }
+
+    // Function to close the Medium Severity Tasks popup
+    function closeMediumSeverityTasksPopup() {
+        var modal = document.getElementById("mediumSeverityTasksModal");
+        modal.style.display = "none";
+    }
+
+    // Function to open the Low Severity Tasks popup
+    function openLowSeverityTasksPopup() {
+        var modal = document.getElementById("lowSeverityTasksModal");
+        modal.style.display = "block";
+    }
+
+    // Function to close the Low Severity Tasks popup
+    function closeLowSeverityTasksPopup() {
+        var modal = document.getElementById("lowSeverityTasksModal");
+        modal.style.display = "none";
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    // Function to open the Completed Tasks popup
+    function openCompletedTasksPopup() {
+        var modal = document.getElementById("completedTasksModal");
+        modal.style.display = "block";
+    }
+
+    // Function to close the Completed Tasks popup
+    function closeCompletedTasksPopup() {
+        var modal = document.getElementById("completedTasksModal");
+        modal.style.display = "none";
+    }
+
+    // Close the popup if the user clicks outside of it
+    window.onclick = function(event) {
+        var modal = document.getElementById("completedTasksModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
     }
 </script>

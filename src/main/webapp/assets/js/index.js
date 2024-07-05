@@ -40,7 +40,7 @@ $.ajax({
 		                	window.location.href = "index.jsp";
 		                }
 		                else if(result.role === "admin"){
-							window.location.href = "index.jsp";
+							window.location.href = "admin.jsp";
 						}
 						else{
 							window.location.href = "employee_dashboard.jsp";

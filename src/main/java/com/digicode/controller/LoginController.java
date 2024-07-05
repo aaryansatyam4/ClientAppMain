@@ -30,12 +30,63 @@ public class LoginController {
     public String test() {
         System.out.println("Hello java");
 
-        LoginServiceImpl loginImpl = new LoginServiceImpl();
+	String id = "01";
+    	
+    	System.out.println("getUserDetails Method called!");
+    	
+    	JSONObject responseJSON = new JSONObject();
+    	JSONObject dataJSON = new JSONObject();
+    	LoginServiceImpl loginService = new LoginServiceImpl();
+    	EmployeeModel user = null;
 
-        new ArrayList<>();
-        loginImpl.listAllEmplyee();
+    	
+    	if(id == null || id == "") {
+    		System.out.println("UserId is either null or empty!");
+    		 responseJSON.put("status", "failure");
+             responseJSON.put("message", "invalid user");
+             responseJSON.put("pageName", "login");
+             responseJSON.put("data", null);
+    	}
+    	
+    	try {
+    		
+    		user = loginService.getUserById(id);
+    		
+    		if(user != null) {
+    			System.out.println("USER FOUND!");
+    			
+    			dataJSON.put("id", user.getUserId());
+    			dataJSON.put("fName", user.getFirstName());
+    			
+    			responseJSON.put("status", "success");
+                responseJSON.put("message", "user found");
+                responseJSON.put("pageName", "");
+                responseJSON.put("data", null);
+    			
+    		}else {
+    			System.out.println("USER NOT FOUND");
+    			responseJSON.put("status", "success");
+                responseJSON.put("message", "user not found");
+                responseJSON.put("pageName", "");
+                responseJSON.put("data", null);
+    			
+    		}
+    		
+    	
+    	}catch (Exception e) {
+    		System.out.println("error : ");
+			e.printStackTrace();
+			 responseJSON.put("status", "failure");
+             responseJSON.put("message", "invalid user");
+             responseJSON.put("pageName", "login");
+             responseJSON.put("data", null);
+			
+		}
 
-        return "hello java";
+        
+      return responseJSON.toString();
+
+        //return "hello java1";
     }
 
     @POST
@@ -80,6 +131,73 @@ public class LoginController {
         }
 
         System.out.println(responseJSON);
+        return responseJSON.toString();
+    }
+    
+    @GET
+    @Path("/details")
+    @Produces(MediaType.APPLICATION_JSON)
+  //  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public String getUserDetails( ) {
+    	
+    	String id = "01";
+    	
+    	System.out.println("getUserDetails Method called!");
+    	
+    	JSONObject responseJSON = new JSONObject();
+    	JSONObject dataJSON = new JSONObject();
+    	LoginServiceImpl loginService = new LoginServiceImpl();
+    	EmployeeModel user = null;
+
+    	
+    	if(id == null || id == "") {
+    		System.out.println("UserId is either null or empty!");
+    		 responseJSON.put("status", "failure");
+             responseJSON.put("message", "invalid user");
+             responseJSON.put("pageName", "login");
+             responseJSON.put("data", null);
+    	}
+    	
+    	try {
+    		
+    		user = loginService.getUserById(id);
+    		
+    		if(user != null) {
+    			System.out.println("USER FOUND!" +user.getFirstName());
+    			
+    			dataJSON.put("id", user.getUserId());
+    			dataJSON.put("fName", user.getFirstName());
+    			dataJSON.put("lname", user.getLastName());
+    			dataJSON.put("address", user.getAddress());
+    			
+    			responseJSON.put("status", "success");
+                responseJSON.put("message", "user found");
+                responseJSON.put("pageName", "");
+                responseJSON.put("data", dataJSON);
+    			
+    		}else {
+    			System.out.println("USER NOT FOUND");
+    			responseJSON.put("status", "success");
+                responseJSON.put("message", "user not found");
+                responseJSON.put("pageName", "");
+                responseJSON.put("data", null);
+    			
+    		}
+    		
+    	
+    	}catch (Exception e) {
+    		System.out.println("error : ");
+			e.printStackTrace();
+			 responseJSON.put("status", "failure");
+             responseJSON.put("message", "invalid user");
+             responseJSON.put("pageName", "login");
+             responseJSON.put("data", null);
+			
+		}
+
+        
+        
+
         return responseJSON.toString();
     }
 }
