@@ -10,7 +10,6 @@
 <%@ page import="java.util.Date" %>
 <%@ page import="com.digicode.model.TicketLogs" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-
 <%
     // Initialize Hibernate SessionFactory
     Configuration configuration = new Configuration().configure();
@@ -86,38 +85,23 @@
             monthlyCompletedCounts[month] = count;
         }
         
-     // Query the completed tickets
-       highSeverityTickets = hibernateSession.createQuery(
-            "FROM TicketsModel WHERE severity = 'high' AND assignee = :username"
+        // Query the completed tickets
+        highSeverityTickets = hibernateSession.createQuery(
+            "FROM TicketsModel WHERE status != 'Completed' AND severity = 'high' AND assignee = :username"
         ).setParameter("username", username).list();
-     
-       mediumSeverityTickets = hibernateSession.createQuery(
-               "FROM TicketsModel WHERE severity = 'medium' AND assignee = :username"
-           ).setParameter("username", username).list();
-       
-       lowSeverityTickets = hibernateSession.createQuery(
-               "FROM TicketsModel WHERE severity = 'low' AND assignee = :username"
-           ).setParameter("username", username).list();
-     
-     
-     
-     
-     
-       completedTickets = hibernateSession.createQuery(
-               "FROM TicketsModel WHERE status = 'Completed' AND assignee = :username"
-           ).setParameter("username", username).list();
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
+        
+        mediumSeverityTickets = hibernateSession.createQuery(
+            "FROM TicketsModel WHERE status != 'Completed' AND severity = 'medium' AND assignee = :username"
+        ).setParameter("username", username).list();
+        
+        lowSeverityTickets = hibernateSession.createQuery(
+            "FROM TicketsModel WHERE status != 'Completed' AND severity = 'low' AND assignee = :username"
+        ).setParameter("username", username).list();
+        
+        // Query the latest 10 completed tickets
+        completedTickets = hibernateSession.createQuery(
+            "FROM TicketsModel WHERE status = 'Completed' AND assignee = :username ORDER BY CompletedAt DESC"
+        ).setParameter("username", username).setMaxResults(10).list();
 
         // Log the size of completedTickets to verify data retrieval
         System.out.println("Completed Tickets Count: " + completedTickets.size());
@@ -125,9 +109,6 @@
         // Assign completedTickets to request attribute for JSP rendering
         request.setAttribute("completedTickets", completedTickets);
 
-        
-        
-        
         transaction.commit();
     } catch (Exception e) {
         if (transaction != null) {
@@ -141,8 +122,6 @@
         // sessionFactory.close();
     }
 %>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,177 +137,74 @@
     <link rel="shortcut icon" href="./assets/img/icons/icon-48x48.png" />
     <link rel="canonical" href="https://demo-basic.adminkit.io/" />
     <link href="./assets/css/app.css" rel="stylesheet">
+    <link href="./assets/css/ed.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <style>
-        .card-equal-height {
-            height: 100%;
-        }
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgb(0,0,0); 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px; 
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-           
-  
-   .chart-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.card-title {
-    margin: 0;
-    padding: 10px 0; /* Adjust spacing as needed */
-    font-size: 1rem; /* Adjust font size if needed */
-    text-align: center;
-}
-
-#severityChart {
-    width: 60%; /* Set desired width percentage */
-    height: auto; /* Adjust height automatically */
-    max-height: 70%; /* Optional: Adjust to control max height */
-}
-   
-
- 
-#element {
-  display: block;
-
-  box-sizing: border-box;
-
-  height: 304px;
-
-  width: auto;
-
-}
-
-#element.hovered {
-    width: 398px; /* Ensure units are provided */
-    height: auto;
-    
-}
-
-#element.clicked {
-    background-color: lightblue;
-    
-}
-
-/* Modal styles */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 70%%; /* Full height */
-  overflow: auto; /* Enable scrolling if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 0% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-/* Form styles */
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.form-select, .form-control {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ced4da;
-}
-
-.form-select:focus, .form-control:focus {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background-color: #0069d9;
-}
- 
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 </head>
+
+<style>
+    .preloader {
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+        backdrop-filter: blur(10px); /* Adjust blur radius as needed */
+        -webkit-backdrop-filter: blur(10px); /* For Safari */
+        height: 100vh; /* Full viewport height */
+        width: 100vw; /* Full viewport width */
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .preloader::before {
+        content: '';
+        background: url("./assets/img/photos/preloader.png") no-repeat center center;
+        background-size: 300px; /* Fixed size for the preloader image */
+        width: 300px; /* Fixed width for the preloader image */
+        height: 300px; /* Fixed height for the preloader image */
+        position: absolute;
+        animation: rotate 15s infinite linear; /* Rotation animation */
+    }
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
 <body>
+    <script>
+        // JavaScript to hide the preloader after a delay
+        document.addEventListener("DOMContentLoaded", function() {
+            var loader = document.getElementById("preloader");
+
+            // Add a delay of 1.5 seconds (1500 milliseconds) before hiding the preloader
+            setTimeout(function () {
+                loader.style.display = "none";
+            }, 1500);
+        });
+    </script>
+<div class="preloader" id="preloader"></div>
     <div class="wrapper">
         <jsp:include page="sidebar.jsp"></jsp:include>
+        
+        
+        
+        
+        
         <div class="main">
             <jsp:include page="nav.jsp"></jsp:include>
             <main class="content">
+            
                 <div class="container-fluid p-0">
-                    <!-- Top Boxes -->
-                    
+                    <!-- Top Boxes -->                  
                     <div class="row">
                     
                      <div class="col-md-3 col-sm-6 mb-3">
@@ -381,8 +257,7 @@
                                 </div>
                             </div>
                             </a>
-                        </div>
-                        
+                        </div>                      
                         <div class="col-md-3 col-sm-6 mb-3">
                             <div class="card">
                                 <div class="card-body">
@@ -397,8 +272,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
+                        </div>                       
                     </div>
                     <div class="row">
                         <div class="col-md-3 col-sm-6 mb-3">
@@ -430,12 +304,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                       
-                        
-                         
-                        
+                        </div> 
                         <div class="col-md-3 col-sm-6 mb-3">
                             <div class="card" onclick="openLowSeverityTasksPopup()">
                                 <div class="card-body">
@@ -454,11 +323,8 @@
                         </div>
                        
                     </div>
-                    
-                    <!-- Logs Created by the User -->
-                   
-                </div>
-                
+                 </div>   
+                    <!-- Logs Created by the User -->                                           
               <div class="row">
     <div class="col-lg-6 mb-3">
         <div class="card card-equal-height">
@@ -478,77 +344,80 @@
 </div>
     
 </div>
-              
-                
-   
-                
+             
                 <%-- Pending Tickets Table --%>
-<div class="row">
-    <div class="col-xl-12 col-xxl-12 d-flex">
-        <div class="card flex-fill w-100">
-            <div class="card-header">
-                <h5 class="card-title" id="ongoing">ONGOING TASKS</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-hover my-0">
-                    <thead>
-                        <tr>
-                            <th>Ticket Name</th>
-                            <th class="d-none d-xl-table-cell">Ticket Id</th>
-                            <th>Severity</th>
-                            <th class="d-none d-md-table-cell">Remarks</th>
-                            <th class="d-none d-md-table-cell">Assigned By</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% 
-                        if (assignedTickets.isEmpty()) { 
-                        %>
-                            <tr>
-                                <td colspan="6" class="text-center">No Ongoing Tasks</td>
-                            </tr>
-                        <% 
-                        } else {
-                            for (TicketsModel ticket : assignedTickets) { 
-                        %>
-                            <tr>
-                                <td><%= ticket.getTicketName() %></td>
-                                <td class="d-none d-xl-table-cell"><%= ticket.getId() %></td>
-                                <td><span class="badge bg-danger"><%= ticket.getSeverity() %></span></td>
-                                <td class="d-none d-md-table-cell"><%= ticket.getRemark() %></td>
-                                <td class="d-none d-md-table-cell"><%= ticket.getCreatedBy() %></td>
-                                <td><button class="btn btn-primary" onclick="openModal('<%= ticket.getId() %>')">Action</button></td>
-                            </tr>
-                        <% 
-                            } 
-                        }
-                        %>
-                    </tbody>
-                </table>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">ONGOING TASKS</h5>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="d-none d-xl-table-cell">Task Id</th>
+                                    <th>Task Name</th>
+                                    <th>Severity</th>
+                                    <th class="d-none d-md-table-cell">Assigned By</th>
+                                    <th class="d-none d-md-table-cell">Assigned Date</th>
+                                    <th class="d-none d-md-table-cell">Due Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (assignedTickets.isEmpty()) { %>
+                                    <tr>
+                                        <td colspan="7" class="text-center">No Ongoing Tasks</td>
+                                    </tr>
+                                <% } else {
+                                    for (TicketsModel ticket : assignedTickets) { 
+                                        String severity = ticket.getSeverity();
+                                        String badgeColor = "";
+                                        
+                                        // Determine badge color based on severity
+                                        switch (severity) {
+                                            case "high":
+                                                badgeColor = "bg-danger"; // Red for high severity
+                                                break;
+                                            case "medium":
+                                                badgeColor = "bg-warning text-dark"; // Orange for medium severity
+                                                break;
+                                            case "low":
+                                                badgeColor = "bg-success"; // Green for low severity
+                                                break;
+                                            default:
+                                                badgeColor = "bg-primary"; // Default color
+                                        }
+                                %>
+                                    <tr>
+                                        <td class="d-none d-xl-table-cell"><%= ticket.getId() %></td>
+                                        <td><%= ticket.getTicketName() %></td>
+                                        <td><span class="badge <%= badgeColor %>"><%= ticket.getSeverity() %></span></td>
+                                        <td class="d-none d-md-table-cell"><%= ticket.getCreatedBy() %></td>
+                                        <td class="d-none d-md-table-cell"><%= ticket.getCreatedAt() %></td>
+                                        <td class="d-none d-md-table-cell"><%= ticket.getDueDate() %></td>
+                                        <td><button class="btn btn-primary" onclick="openModal('<%= ticket.getId() %>')">Action</button></td>
+                                    </tr>
+                                <% } } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-
-
- 
-                
+              
             </main>
             <jsp:include page="footer.jsp"></jsp:include>
         </div>
     </div>
-                    
-
-                    
-
-                    <%-- The Modal --%>
-                    
-
-                    
-                    
-                    
+                 
 <!-- The Modal -->
 <div id="ticketModal" class="modal">
   <div class="modal-content">
@@ -561,14 +430,7 @@
           <option value="completed">Mark as Completed</option>
         </select>
       </div>
-      <div class="form-group mb-3" id="transferToGroup" style="display:none;">
-        <label for="transferTo" class="form-label">Transfer To</label>
-        <select name="transferTo" id="transferTo" class="form-select">
-          <% for (EmployeeModel user : users) { %>
-            <option value="<%= user.getUserId() %>"><%= user.getFirstName() %></option>
-          <% } %>
-        </select>
-      </div>
+      
       <div class="form-group mb-3">
         <label for="remarks" class="form-label">Remarks</label>
         <textarea name="remarks" id="remarks" class="form-control"></textarea>
@@ -577,65 +439,38 @@
     </form>
   </div>
 </div>
-
-<script>
-    var modal = document.getElementById("ticketModal");
-    var span = document.getElementsByClassName("close")[0];
-    var transferToGroup = document.getElementById("transferToGroup");
-
-    function openModal(ticketId) {
-        document.getElementById("ticketId").value = ticketId;
-        modal.style.display = "block";
-    }
-
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-
-    function handleActionChange() {
-        var action = document.getElementById("action").value;
-        if (action === "transfer") {
-            transferToGroup.style.display = "block";
-        } else {
-            transferToGroup.style.display = "none";
-        }
-    }
-</script>
-<!-- Completed Tasks Modal -->
- <div id="completedTasksModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeCompletedTasksPopup()">&times;</span>
-            <h2>Completed Tasks</h2>
-            <table class="table table-striped">
-                <thead>
+ <!-- Completed Tasks Modal -->
+<div id="completedTasksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeCompletedTasksPopup()">&times;</span>
+        <h2>Last 10 Completed Tasks</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Task Name</th>
+                    <th>Severity</th>
+                    <th>Completed At</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (TicketsModel ticket : completedTickets) { %>
                     <tr>
-                        <th>ID</th> 
-                        <th>Severity</th>
-                        <th>Completed At</th>
-                        <th>Manager</th>
+                        <td><%= ticket.getId() %></td>
+                        <td><%= ticket.getTicketName() %></td>
+                        <td><%= ticket.getSeverity() %></td>
+                        <td><%= ticket.getCompletedAt() %></td>
+                        <td><%= ticket.getDueDate() %></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <% for (TicketsModel ticket : completedTickets) { %>
-                        <tr>
-                            <td><%= ticket.getId() %></td>
-                            <td><%= ticket.getSeverity() %></td>
-                            <td><%= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ticket.getCompletedAt()) %></td>
-                            <td><%= ticket.getManager() %></td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
+                <% } %>
+            </tbody>
+        </table>
+         <div class="modal-footer">
+            For further details, go to <a href="task.jsp">tasks</a>
         </div>
     </div>
-
-
+</div>
 
 
 <!-- High Severity Tasks Modal -->
@@ -647,8 +482,9 @@
             <thead>
                 <tr>
                     <th>ID</th> 
-                    <th>Severity</th>
                     <th>Task Name</th>
+                    <th>Assigned at </th>
+                    <th>Due Date</th>
                     <th>Manager</th>
                 </tr>
             </thead>
@@ -656,13 +492,17 @@
                 <% for (TicketsModel ticket : highSeverityTickets) { %>
                     <tr>
                         <td><%= ticket.getId() %></td>
-                        <td><%= ticket.getSeverity() %></td>
                         <td><%= ticket.getTicketName() %></td>
-                        <td><%= ticket.getManager() %></td>
+                         <td><%= ticket.getCreatedAt() %></td>
+                        <td><%= ticket.getDueDate() %></td>
+                         <td><%= ticket.getManager() %></td>
                     </tr>
                 <% } %>
             </tbody>
         </table>
+         <div class="modal-footer">
+            For further details, go to <a href="task.jsp">tasks</a>
+        </div>
     </div>
 </div>
 
@@ -674,23 +514,28 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th> 
-                    <th>Severity</th>
-                   <th>Task Name</th>
+                  <th>ID</th> 
+                    <th>Task Name</th>
+                    <th>Assigned at </th>
+                    <th>Due Date</th>
                     <th>Manager</th>
                 </tr>
             </thead>
             <tbody>
-                <% for (TicketsModel ticket : highSeverityTickets) { %>
+                <% for (TicketsModel ticket : mediumSeverityTickets) { %>
                     <tr>
-                        <td><%= ticket.getId() %></td>
-                        <td><%= ticket.getSeverity() %></td>
+                       <td><%= ticket.getId() %></td>
                         <td><%= ticket.getTicketName() %></td>
-                        <td><%= ticket.getManager() %></td>
+                         <td><%= ticket.getCreatedAt() %></td>
+                        <td><%= ticket.getDueDate() %></td>
+                         <td><%= ticket.getManager() %></td>
                     </tr>
                 <% } %>
             </tbody>
         </table>
+         <div class="modal-footer">
+            For further details, go to <a href="task.jsp">tasks</a>
+        </div>
     </div>
 </div>
 
@@ -703,228 +548,137 @@
             <thead>
                 <tr>
                     <th>ID</th> 
-                    <th>Severity</th>
                     <th>Task Name</th>
+                    <th>Assigned at </th>
+                    <th>Due Date</th>
                     <th>Manager</th>
                 </tr>
             </thead>
             <tbody>
-               <% for (TicketsModel ticket : highSeverityTickets) { %>
+               <% for (TicketsModel ticket : lowSeverityTickets) { %>
                     <tr>
                         <td><%= ticket.getId() %></td>
-                        <td><%= ticket.getSeverity() %></td>
                         <td><%= ticket.getTicketName() %></td>
-                        <td><%= ticket.getManager() %></td>
+                         <td><%= ticket.getCreatedAt() %></td>
+                        <td><%= ticket.getDueDate() %></td>
+                         <td><%= ticket.getManager() %></td>
                     </tr>
                 <% } %>
             </tbody>
         </table>
+         <div class="modal-footer">
+            For further details, go to <a href="task.jsp">tasks</a>
+        </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
-    // Function to open the High Severity Tasks popup
-    function openHighSeverityTasksPopup() {
-        var modal = document.getElementById("highSeverityTasksModal");
-        modal.style.display = "block";
-    }
+var pendingTasksData = [<%= highSeverityCount %>, <%= mediumSeverityCount %>, <%= lowSeverityCount %>];
+var hasPendingTasks = pendingTasksData.reduce((a, b) => a + b, 0) > 0; // Check if there are any pending tasks
 
-    // Function to close the High Severity Tasks popup
-    function closeSeverityTasksPopup(severity) {
-        var modal = document.getElementById(severity + "SeverityTasksModal");
-        modal.style.display = "none";
-    }
-
-    // Function to open the Medium Severity Tasks popup
-    function openMediumSeverityTasksPopup() {
-        var modal = document.getElementById("mediumSeverityTasksModal");
-        modal.style.display = "block";
-    }
-
-    // Function to close the Medium Severity Tasks popup
-    function closeMediumSeverityTasksPopup() {
-        var modal = document.getElementById("mediumSeverityTasksModal");
-        modal.style.display = "none";
-    }
-
-    // Function to open the Low Severity Tasks popup
-    function openLowSeverityTasksPopup() {
-        var modal = document.getElementById("lowSeverityTasksModal");
-        modal.style.display = "block";
-    }
-
-    // Function to close the Low Severity Tasks popup
-    function closeLowSeverityTasksPopup() {
-        var modal = document.getElementById("lowSeverityTasksModal");
-        modal.style.display = "none";
-    }
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script>
-    // Function to open the Completed Tasks popup
-    function openCompletedTasksPopup() {
-        var modal = document.getElementById("completedTasksModal");
-        modal.style.display = "block";
-    }
-
-    // Function to close the Completed Tasks popup
-    function closeCompletedTasksPopup() {
-        var modal = document.getElementById("completedTasksModal");
-        modal.style.display = "none";
-    }
-
-    // Close the popup if the user clicks outside of it
-    window.onclick = function(event) {
-        var modal = document.getElementById("completedTasksModal");
-        if (event.target == modal) {
-            modal.style.display = "none";
+var ctx = document.getElementById('severityChart').getContext('2d');
+var severityChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: hasPendingTasks ? ['High Severity', 'Medium Severity', 'Low Severity'] : ['No Pending Tasks'],
+        datasets: [{
+            label: 'Severity Counts',
+            data: hasPendingTasks ? pendingTasksData : [1], // Show 1 to avoid empty chart issue
+            backgroundColor: hasPendingTasks ? [
+                'rgba(199, 0, 57)', // Red for High Severity
+                'rgba(225, 193, 110)', // Yellow for Medium Severity
+                'rgba(115, 147, 179)' // Blue for Low Severity
+            ] : ['rgba(211, 211, 211, 0.6)'], // Grey for no pending tasks
+            borderColor: hasPendingTasks ? [
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(54, 162, 235, 1)'
+            ] : ['rgba(211, 211, 211, 1)'], // Grey for no pending tasks
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+                fontColor: '#333',
+                fontSize: 12
+            }
         }
     }
-</script>
+});
 
-<script>
-    var pendingTasksData = [<%= highSeverityCount %>, <%= mediumSeverityCount %>, <%= lowSeverityCount %>];
-    var hasPendingTasks = pendingTasksData.reduce((a, b) => a + b, 0) > 0; // Check if there are any pending tasks
+// Add event listeners for hover and click
+ctx.canvas.addEventListener('mouseenter', function() {
+    document.getElementById('element').classList.add('hovered');
+});
 
-    var ctx = document.getElementById('severityChart').getContext('2d');
-    var severityChart = new Chart(ctx, {
-        type: 'pie',
+ctx.canvas.addEventListener('mouseleave', function() {
+    document.getElementById('element').classList.remove('hovered');
+});
+
+ctx.canvas.addEventListener('click', function() {
+    document.getElementById('element').classList.toggle('clicked');
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var ctxBar = document.getElementById('monthlyCompletedChart').getContext('2d');
+    var monthlyCompletedChart = new Chart(ctxBar, {
+        type: 'bar',
         data: {
-            labels: hasPendingTasks ? ['High Severity', 'Medium Severity', 'Low Severity'] : ['No Pending Tasks'],
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             datasets: [{
-                label: 'Severity Counts',
-                data: hasPendingTasks ? pendingTasksData : [1], // Show 1 to avoid empty chart issue
-                backgroundColor: hasPendingTasks ? [
-                    'rgba(199, 0, 57)', // Red for High Severity
-                    'rgba(225, 193, 110)', // Yellow for Medium Severity
-                    'rgba(115, 147, 179)' // Blue for Low Severity
-                ] : ['rgba(211, 211, 211, 0.6)'], // Grey for no pending tasks
-                borderColor: hasPendingTasks ? [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(54, 162, 235, 1)'
-                ] : ['rgba(211, 211, 211, 1)'], // Grey for no pending tasks
+                label: 'Completed Tickets',
+                data: <%= new com.google.gson.Gson().toJson(monthlyCompletedCounts) %>,
+                backgroundColor: 'rgba(95, 158, 160)', 
+                borderColor: 'rgba(75, 192, 192, 1)', 
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: true,
-            legend: {
-                display: true,
-                position: 'bottom',
-                labels: {
-                    fontColor: '#333',
-                    fontSize: 12
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 5 // Adjust the step size here as needed
+                    }
                 }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false // Disable tooltips
+                },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        fontColor: '#333',
+                        fontSize: 12
+                    }
+                }
+            },
+            hover: {
+                mode: null // Disable hovering effect
+            },
+            interaction: {
+                mode: 'index', // Keep track of index for tooltips
+                intersect: false
             }
         }
     });
 
-    // Add event listeners for hover and click
-    ctx.canvas.addEventListener('mouseenter', function() {
-        document.getElementById('element').classList.add('hovered');
+    // Ensure chart resizes with container
+    window.addEventListener('resize', function () {
+        monthlyCompletedChart.resize();
     });
-
-    ctx.canvas.addEventListener('mouseleave', function() {
-        document.getElementById('element').classList.remove('hovered');
-    });
-
-    ctx.canvas.addEventListener('click', function() {
-        document.getElementById('element').classList.toggle('clicked');
-    });
+});
 </script>
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var ctxBar = document.getElementById('monthlyCompletedChart').getContext('2d');
-        var monthlyCompletedChart = new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                datasets: [{
-                    label: 'Completed Tickets',
-                    data: <%= new com.google.gson.Gson().toJson(monthlyCompletedCounts) %>,
-                    backgroundColor: 'rgba(95, 158, 160)', 
-                    borderColor: 'rgba(75, 192, 192, 1)', 
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 5 // Adjust the step size here as needed
-                        }
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        enabled: false // Disable tooltips
-                    },
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            fontColor: '#333',
-                            fontSize: 12
-                        }
-                    }
-                },
-                hover: {
-                    mode: null // Disable hovering effect
-                },
-                interaction: {
-                    mode: 'index', // Keep track of index for tooltips
-                    intersect: false
-                }
-            }
-        });
-
-        // Ensure chart resizes with container
-        window.addEventListener('resize', function () {
-            monthlyCompletedChart.resize();
-        });
-    });
-</script>
-
-
-
-   
-
+<script src="./assets/js/ed.js"></script>
     <script src="./assets/js/app.js"></script>
 </body>
 </html>

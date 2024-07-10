@@ -30,28 +30,24 @@ $.ajax({
         userName: userName,
         password: password
     },
-    success: function(result) {
-        result = JSON.parse(result);
-        //alert("Result: "+ result.message());
-        
-		if (result.status === "success") {
-						//alert("Success");
-						if(result.role === "super_admin"){
-		                	window.location.href = "index.jsp";
-		                }
-		                else if(result.role === "admin"){
-							window.location.href = "admin.jsp";
-						}
-						else{
-							window.location.href = "index.jsp";
-						}
-		            } else {
-		                //alert("Login failed: " + result.message);
-		            }
-		
-		
-		
-    }
+	success: function(result) {
+	    result = JSON.parse(result);
+	    console.log(result);
+	    if (result.status === "success") {
+	        console.log("Login successful. Role: " + result.role);
+	        if (result.role === "super_admin") {
+	            window.location.href = "index.jsp";
+	        } else if (result.role === "admin") {
+	            window.location.href = "admin.jsp";
+	        } else {
+	            window.location.href = "index.jsp";
+	        }
+	    } else {
+	        console.log("Login failed: " + result.message);
+	        alert("Login failed: " + result.message);
+	    }
+	}
+
 });
 return false;
 

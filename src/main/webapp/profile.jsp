@@ -1,3 +1,7 @@
+
+
+
+
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ page import="com.digicode.dao.LoginServiceImpl"%>
@@ -433,12 +437,58 @@ body {
 	color: #fff;
 }
 </Style>
+<style>
+    .preloader {
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+        backdrop-filter: blur(10px); /* Adjust blur radius as needed */
+        -webkit-backdrop-filter: blur(10px); /* For Safari */
+        height: 100vh; /* Full viewport height */
+        width: 100vw; /* Full viewport width */
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
+    .preloader::before {
+        content: '';
+        background: url("./assets/img/photos/preloader.png") no-repeat center center;
+        background-size: 300px; /* Fixed size for the preloader image */
+        width: 300px; /* Fixed width for the preloader image */
+        height: 300px; /* Fixed height for the preloader image */
+        position: absolute;
+        animation: rotate 15s infinite linear; /* Rotation animation */
+    }
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 
 </head>
 
 
 <body>
+   <script>
+        // JavaScript to hide the preloader after a delay
+        document.addEventListener("DOMContentLoaded", function() {
+            var loader = document.getElementById("preloader");
+
+            // Add a delay of 1.5 seconds (1500 milliseconds) before hiding the preloader
+            setTimeout(function () {
+                loader.style.display = "none";
+            }, 1500);
+        });
+    </script>
+<div class="preloader" id="preloader"></div>
 
 	<%
 	// Initialize the username variable
@@ -467,13 +517,6 @@ body {
 
 			<div class="main-body">
 
-<div class="check">
-    <p>User ID: <span id="userId"></span></p>
-    <p>First Name: <span id="firstName"></span></p>
-    <input type="text" id="userid" placeholder="Enter User ID">
-<button onclick="getuserDetails()">Get User Details</button>
-    
-</div>
 				<div class="row gutters-sm">
 
 
@@ -851,3 +894,6 @@ body {
 			<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 </body>
 </html>
+
+
+

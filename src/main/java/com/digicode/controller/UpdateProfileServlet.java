@@ -1,6 +1,7 @@
 package com.digicode.controller;
 
 import com.digicode.dao.LoginServiceImpl;
+import javax.servlet.http.Cookie;
 import com.digicode.model.EmployeeModel;
 
 import java.io.IOException;
@@ -15,75 +16,88 @@ import javax.servlet.http.HttpServletResponse;
 public class UpdateProfileServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    String userId = request.getParameter("userId");
-
-    // Fetch existing user
-    LoginServiceImpl loginService = new LoginServiceImpl();
-    EmployeeModel existingUser = loginService.getUserById(userId);
-
-    if (existingUser != null) {
-        // Update fields only if provided
-        String firstName = request.getParameter("firstName");
-        if (firstName != null && !firstName.isEmpty()) {
-            existingUser.setFirstName(firstName);
-        }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         
-        String lastName = request.getParameter("lastName");
-        if (lastName != null && !lastName.isEmpty()) {
-            existingUser.setLastName(lastName);
-        }
+        String userId = null;
         
-        String email = request.getParameter("email");
-        if (email != null && !email.isEmpty()) {
-            existingUser.setEmail(email);
+        // Retrieve userId from cookies
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("userId".equals(cookie.getName())) {
+                    userId = cookie.getValue();
+                    break;
+                }
+            }
         }
 
-        String contactNo = request.getParameter("contact_no");
-        if (contactNo != null && !contactNo.isEmpty()) {
-            existingUser.setContact_no(contactNo);
-        }
-        
-        String address = request.getParameter("address");
-        if (address != null && !address.isEmpty()) {
-            existingUser.setAddress(address);
-        }
+        if (userId != null) {
+            // Fetch existing user
+            LoginServiceImpl loginService = new LoginServiceImpl();
+            EmployeeModel existingUser = loginService.getUserById(userId);
 
-        String city = request.getParameter("city");
-        if (city != null && !city.isEmpty()) {
-            existingUser.setCity(city);
-        }
+            if (existingUser != null) {
+                // Update fields only if provided
+                String firstName = request.getParameter("firstName");
+                if (firstName != null && !firstName.isEmpty()) {
+                    existingUser.setFirstName(firstName);
+                }
+                
+                String lastName = request.getParameter("lastName");
+                if (lastName != null && !lastName.isEmpty()) {
+                    existingUser.setLastName(lastName);
+                }
+                
+                String email = request.getParameter("email");
+                if (email != null && !email.isEmpty()) {
+                    existingUser.setEmail(email);
+                }
 
-        String state = request.getParameter("state");
-        if (state != null && !state.isEmpty()) {
-            existingUser.setState(state);
-        }
+                String contactNo = request.getParameter("contact_no");
+                if (contactNo != null && !contactNo.isEmpty()) {
+                    existingUser.setContact_no(contactNo);
+                }
+                
+                String address = request.getParameter("address");
+                if (address != null && !address.isEmpty()) {
+                    existingUser.setAddress(address);
+                }
 
-        String country = request.getParameter("country");
-        if (country != null && !country.isEmpty()) {
-            existingUser.setCountry(country);
-        }
+                String city = request.getParameter("city");
+                if (city != null && !city.isEmpty()) {
+                    existingUser.setCity(city);
+                }
 
-        String pin = request.getParameter("pin");
-        if (pin != null && !pin.isEmpty()) {
-            existingUser.setPin(pin);
-        }
-        
-        
+                String state = request.getParameter("state");
+                if (state != null && !state.isEmpty()) {
+                    existingUser.setState(state);
+                }
 
-       
+                String country = request.getParameter("country");
+                if (country != null && !country.isEmpty()) {
+                    existingUser.setCountry(country);
+                }
 
-        boolean updated = loginService.updateUser(existingUser);
+                String pin = request.getParameter("pin");
+                if (pin != null && !pin.isEmpty()) {
+                    existingUser.setPin(pin);
+                }
 
-        if (updated) {
-            response.sendRedirect("profile.jsp");
+                // Update other fields similarly...
+
+                boolean updated = loginService.updateUser(existingUser);
+
+                if (updated) {
+                    response.sendRedirect("profile.jsp");
+                } else {
+                    response.getWriter().println("Failed to update profile.");
+                }
+            } else {
+                response.getWriter().println("User not found.");
+            }
         } else {
-            response.getWriter().println("Failed to update profile.");
+            response.getWriter().println("User ID not found in cookies.");
         }
-    } else {
-        response.getWriter().println("User not found.");
     }
-}
 }

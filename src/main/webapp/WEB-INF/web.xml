@@ -232,4 +232,34 @@
     <servlet-name>EmployeeDashboardServlet</servlet-name>
     <url-pattern>/EmployeeDashboardServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EmployeeProfileServlet</display-name>
+    <servlet-name>EmployeeProfileServlet</servlet-name>
+    <servlet-class>com.digicode.controller.EmployeeProfileServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EmployeeProfileServlet</servlet-name>
+    <url-pattern>/EmployeeProfileServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UserDetailsServlet</display-name>
+    <servlet-name>UserDetailsServlet</servlet-name>
+    <servlet-class>com.digicode.controller.UserDetailsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserDetailsServlet</servlet-name>
+    <url-pattern>/UserDetailsServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>FetchChartDataServlet</display-name>
+    <servlet-name>FetchChartDataServlet</servlet-name>
+    <servlet-class>com.digicode.controller.FetchChartDataServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FetchChartDataServlet</servlet-name>
+    <url-pattern>/FetchChartDataServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

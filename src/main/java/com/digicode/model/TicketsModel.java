@@ -66,6 +66,10 @@ public class TicketsModel implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subgroup_id")
     private TaskSubgroupModel taskSubgroup;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    private EmployeeModel employee;
 
     // Constructors
     public TicketsModel() {
@@ -208,3 +212,4 @@ public class TicketsModel implements Serializable {
         this.taskSubgroup = taskSubgroup;
     }
 }
+
