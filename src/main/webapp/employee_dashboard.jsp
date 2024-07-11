@@ -577,7 +577,7 @@ var hasPendingTasks = pendingTasksData.reduce((a, b) => a + b, 0) > 0; // Check 
 
 var ctx = document.getElementById('severityChart').getContext('2d');
 var severityChart = new Chart(ctx, {
-    type: 'pie',
+    type: 'polarArea',
     data: {
         labels: hasPendingTasks ? ['High Severity', 'Medium Severity', 'Low Severity'] : ['No Pending Tasks'],
         datasets: [{

@@ -295,11 +295,11 @@ color:#72A0C1;
             <div id="ticketModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Ticket Details</h2>
+        <h2>Tasks Details</h2>
         <table>
             <tr>
                 <th>Ticket ID</th>
-                <td id="ticketId" ></td>>
+                <td id="ticketId" ></td>
             </tr>
             <tr>
                 <th>Task Name</th>

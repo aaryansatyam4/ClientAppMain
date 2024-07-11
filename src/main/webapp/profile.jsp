@@ -456,7 +456,7 @@ body {
     .preloader::before {
         content: '';
         background: url("./assets/img/photos/preloader.png") no-repeat center center;
-        background-size: 300px; /* Fixed size for the preloader image */
+        background-size: 300px;
         width: 300px; /* Fixed width for the preloader image */
         height: 300px; /* Fixed height for the preloader image */
         position: absolute;
