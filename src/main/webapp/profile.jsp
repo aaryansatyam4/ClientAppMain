@@ -1,13 +1,5 @@
-
-
-
-
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<%@ page import="com.digicode.dao.LoginServiceImpl"%>
-<%@ page import="com.digicode.model.EmployeeModel"%>
-<%@ page import="javax.servlet.http.Cookie"%>
-<%@ page import="javax.servlet.http.HttpServletRequest"%>
 
 
 <!DOCTYPE html>
@@ -44,7 +36,56 @@
 
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+ <script>
+        $(document).ready(function() {
+            
+        	fetchUserProfile();
+            // Call fetchUserProfile function on document ready
+            fetchUserProfile();
+        });
+        
+        
+        function fetchUserProfile() {
+            $.ajax({
+                url: 'http://localhost:8080/v1/api/e/d',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                	
+                	debugger;
+                	
+                    console.log("Response from server:", response);
+                    
+                    $("#value").text(response.data.userId);
+                    $("#employeeName").text(response.data.firstName + " " + response.data.lastName);
+                    $("#position").text(response.data.position);
+                    $("#email").text(response.data.email);
+                    $("#mobile").text(response.data.contact_no);
+                    $("#address").text(response.data.address);
+                    $("#department").text(response.data.department);
+                    $("#joiningDate").text(response.data.joining_date);
+                    $("#password").text(response.data.password);
+                    
+                    $("#editFirstName").val(response.data.firstName);
+                    $("#editLastName").val(response.data.lastName);
+                    $("#editEmail").val(response.data.email);
+                    $("#editContact_no").val(response.data.contact_no);
+                    $("#editAddress").val(response.data.address);
+                    $("#editCity").val(response.data.city);
+                    $("#editState").val(response.data.state);
+                   
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching profile data:", status, error);
+                    // Update specific elements or provide feedback
+                    $("#value").text("Error loading data");
+                    $("#employeeName").text("");
+                    // Handle other fields similarly
+                }
+            });
+        }
+    </script>
 <script>
 	document
 			.addEventListener(
@@ -117,7 +158,7 @@
 </script>
 
 
-
+  
 <Style>
 
 /* Global reset and base styles */
@@ -437,461 +478,354 @@ body {
 	color: #fff;
 }
 </Style>
-<style>
-    .preloader {
-        background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-        backdrop-filter: blur(10px); /* Adjust blur radius as needed */
-        -webkit-backdrop-filter: blur(10px); /* For Safari */
-        height: 100vh; /* Full viewport height */
-        width: 100vw; /* Full viewport width */
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 100;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
 
-    .preloader::before {
-        content: '';
-        background: url("./assets/img/photos/preloader.png") no-repeat center center;
-        background-size: 300px;
-        width: 300px; /* Fixed width for the preloader image */
-        height: 300px; /* Fixed height for the preloader image */
-        position: absolute;
-        animation: rotate 15s infinite linear; /* Rotation animation */
-    }
-
-    @keyframes rotate {
-        from {
-            transform: rotate(0deg);
-        }
-        to {
-            transform: rotate(360deg);
-        }
-    }
-</style>
 
 </head>
 
 
 <body>
-   <script>
-        // JavaScript to hide the preloader after a delay
-        document.addEventListener("DOMContentLoaded", function() {
-            var loader = document.getElementById("preloader");
+ <div class="wrapper">
+        <jsp:include page="sidebar.jsp"></jsp:include>
+        <div class="main">
+            <jsp:include page="nav.jsp"></jsp:include>
+            <div class="main-body">
+                <div class="row gutters-sm">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="edit-icon-container">
+                                <i class="fas fa-edit edit-icon" id="editIcon"></i>
+                            </div>
+                            <div class="d-flex flex-column align-items-center text-center">
+                                <img id="profilePicture" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
+                                <div class="mt-3">
+                                    <h4><span id="userId"></span></h4>
+                                    <button class="btn btn-info" id="passwordbtn">Change Password</button>
+                                    <button class="btn btn-outline-primary">Message</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Employee Name</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary"><span id="employeeName"></span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Position</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary"><span id="position"></span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary"><span id="email"></span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Mobile</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary"><span id="mobile"></span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Address</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary"><span id="address"></span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Department</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary"><span id="department"></span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Joining Date</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary"><span id="joiningDate"></span></div>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+        <h2>Edit Profile</h2>
+        <form id="editProfileForm">
+            <input type="hidden" id="userId" name="userId" value="">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="editFirstName">First Name:</label>
+                    <input type="text" class="form-control" id="editFirstName" name="firstName" value="">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="editLastName">Last Name:</label>
+                    <input type="text" class="form-control" id="editLastName" name="lastName" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editEmail">Email:</label>
+                <input type="email" class="form-control" id="editEmail" name="email" value="" required>
+            </div>
+            <div class="form-group">
+                <label for="editContact_no">Mobile:</label>
+                <input type="text" class="form-control" id="editContact_no" name="contact_no" value="" required>
+                <div class="invalid-feedback" id="editPhoneError"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="editAddress">Address:</label>
+                    <input type="text" class="form-control" id="editAddress" name="address" value="">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="editCity">City:</label>
+                    <input type="text" class="form-control" id="editCity" name="city" value="">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="editState">State:</label>
+                    <input type="text" class="form-control" id="editState" name="state">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
 
-            // Add a delay of 1.5 seconds (1500 milliseconds) before hiding the preloader
-            setTimeout(function () {
-                loader.style.display = "none";
-            }, 1500);
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    var editModal = $("#editModal");
+    var editClose = editModal.find(".close");
+    var editIcon = $("#editIcon"); // Assuming editIcon is the element triggering modal open
+
+    // Add event listener to close the edit modal
+    editClose.click(function() {
+        editModal.hide();
+    });
+
+    // Close edit modal when clicking outside
+    $(window).click(function(event) {
+        if (event.target === editModal[0]) {
+            editModal.hide();
+        }
+    });
+
+    // Function to open the edit modal with employee data
+    function openEditModal(employeeData) {
+        $('#userId').val(employeeData.userId);
+        $('#editFirstName').val(employeeData.firstName);
+        $('#editLastName').val(employeeData.lastName);
+        $('#editEmail').val(employeeData.email);
+        $('#editContact_no').val(employeeData.contact_no);
+        $('#editAddress').val(employeeData.address);
+        $('#editCity').val(employeeData.city);
+        $('#editState').val(employeeData.state);
+        editModal.show();
+    }
+
+    // Open edit modal when edit icon is clicked
+    editIcon.click(function() {
+        editModal.show();
+    });
+
+    // Form submission handling
+    $('#editProfileForm').submit(function(event) {
+        event.preventDefault();
+
+        var formData = {
+            userId: $('#userId').val(),
+            firstName: $('#editFirstName').val(),
+            lastName: $('#editLastName').val(),
+            email: $('#editEmail').val(),
+            contact_no: $('#editContact_no').val(),
+            address: $('#editAddress').val(),
+            city: $('#editCity').val(),
+            state: $('#editState').val()
+        };
+
+        $.ajax({
+            url: 'http://localhost:8080/v1/updateProfile',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                alert('Profile updated successfully!');
+                editModal.hide(); // Close modal on successful update
+            },
+            error: function(xhr, status, error) {
+                alert('Error updating profile: ' + xhr.responseText);
+            }
         });
-    </script>
-<div class="preloader" id="preloader"></div>
-
-	<%
-	// Initialize the username variable
-	String username = "Guest";
-
-	// Get the cookies from the request
-	Cookie[] cookies = request.getCookies();
-	if (cookies != null) {
-		for (Cookie cookie : cookies) {
-			if ("username".equals(cookie.getName())) {
-		username = cookie.getValue();
-		break;
-			}
-		}
-	}
-
-	LoginServiceImpl loginService = new LoginServiceImpl();
-	EmployeeModel user = loginService.getUserById(username);
-	%>
-
-	<div class="wrapper">
-		<jsp:include page="sidebar.jsp"></jsp:include>
-
-		<div class="main">
-			<jsp:include page="nav.jsp"></jsp:include>
-
-			<div class="main-body">
-
-				<div class="row gutters-sm">
+    });
+});
+</script>
 
 
-					<div class="card mb-3">
-						<div class="card-body">
-							<div class="edit-icon-container">
-								<i class="fas fa-edit edit-icon" id="editIcon"></i>
-							</div>
-							<div class="d-flex flex-column align-items-center text-center">
-								<img src="https://bootdey.com/img/Content/avatar/avatar7.png"
-									alt="Admin" class="rounded-circle" width="150">
-								<div class="mt-3">
-									<h4><%=username%></h4>
+
+<script>
+<script>
+$(document).ready(function() {
 
 
-									<button class="btn btn-info" id="passwordbtn">Change
-										Password</button>
-									<button class="btn btn-outline-primary">Message</button>
-								</div>
-							</div>
-						</div>
-						<div class="card-body">
-							<div class="row">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Employee Name</h6>
-								</div>
-								<div class="col-sm-9 text-secondary"><%=user != null ? user.getFirstName() + " " + user.getLastName() : "Guest"%></div>
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Position</h6>
-								</div>
-								<div class="col-sm-9 text-secondary"><%=user != null ? user.getPosition() : "Guest"%></div>
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Email</h6>
-								</div>
-								<div class="col-sm-9 text-secondary"><%=user != null ? user.getEmail() : "Guest"%></div>
-							</div>
+    // Password Modal
+    var passwordModal = document.getElementById("passwordModal");
+    var passwordBtn = document.getElementById("passwordbtn");
+    var passwordClose = passwordModal.querySelector(".close");
 
-							<hr>
-							<div class="row">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Mobile</h6>
-								</div>
-								<div class="col-sm-9 text-secondary"><%=user != null ? user.getContact_no() : "Guest"%></div>
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Address</h6>
-								</div>
-								<div class="col-sm-9 text-secondary"><%=user != null
-		? user.getAddress() + ", " + user.getCity() + ", " + user.getState() + ", " + user.getCountry()
-		: "Guest"%></div>
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Department</h6>
-								</div>
-								<div class="col-sm-9 text-secondary"><%=user != null ? user.getDepartment() : "Guest"%></div>
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-sm-3">
-									<h6 class="mb-0">Joining Date</h6>
-								</div>
-								<div class="col-sm-9 text-secondary"><%=user != null ? user.getJoining_date() : "Guest"%></div>
-							</div>
-							<hr>
-						</div>
-					</div>
+    passwordBtn.onclick = function() {
+        passwordModal.style.display = "block";
+    }
+
+    passwordClose.onclick = function() {
+        passwordModal.style.display = "none";
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        if (event.target == editModal) {
+            editModal.style.display = "none";
+        }
+        if (event.target == passwordModal) {
+            passwordModal.style.display = "none";
+        }
+    }
+
+    // Phone number validation
+    var phoneNumberInput = document.getElementById("editContact_no");
+    phoneNumberInput.addEventListener("input", function() {
+        var phoneNumber = phoneNumberInput.value.trim();
+        var isValid = /^\d{10}$/.test(phoneNumber); // Regex for 10 digits only
+
+        if (!isValid) {
+            phoneNumberInput.classList.add("is-invalid");
+            document.getElementById("editPhoneError").textContent = "Enter a valid 10-digit phone number.";
+        } else {
+            phoneNumberInput.classList.remove("is-invalid");
+            document.getElementById("editPhoneError").textContent = "";
+        }
+    });
+});
+</script>
 
 
-					<!-- Edit Modal -->
-					<!-- Edit Modal -->
-					<div id="editModal" class="modal">
-						<div class="modal-content">
-							<span class="close">&times;</span>
-							<h2>Edit Profile</h2>
-							<form action="updateProfile" method="post">
-								<input type="hidden" name="userId"
-									value="<%=user != null ? user.getUserId() : ""%>">
 
-								<div class="form-row">
-									<div class="form-group col-md-6">
-										<label for="firstName">First Name:</label> <input type="text"
-											class="form-control" id="firstName" name="firstName"
-											value="<%=user != null ? user.getFirstName() : ""%>">
-									</div>
-									<div class="form-group col-md-6">
-										<label for="lastName">Last Name:</label> <input type="text"
-											class="form-control" id="lastName" name="lastName"
-											value="<%=user != null ? user.getLastName() : ""%>">
-									</div>
-								</div>
-
-								<div class="form-group">
-									<label for="email">Email:</label> <input type="email"
-										class="form-control" id="email" name="email"
-										value="<%=user != null ? user.getEmail() : ""%>">
-								</div>
-
-								<div class="form-group">
-									<label for="contact_no">Mobile:</label> <input type="text"
-										class="form-control" id="contact_no" name="contact_no"
-										value="<%=user != null ? user.getContact_no() : ""%>"
-										required>
-									<div class="invalid-feedback" id="phoneError"></div>
-								</div>
-
-
-								<div class="form-row">
-									<div class="form-group col-md-6">
-										<label for="address">Address:</label> <input type="text"
-											class="form-control" id="address" name="address"
-											value="<%=user != null ? user.getAddress() : ""%>">
-									</div>
-									<div class="form-group col-md-3">
-										<label for="city">City:</label> <input type="text"
-											class="form-control" id="city" name="city"
-											value="<%=user != null ? user.getCity() : ""%>">
-									</div>
-
-								</div>
-								<div class="form-row">
-									<div class="form-group col-md-6">
-										<label for="state">State:</label> <select class="form-control"
-											id="state" name="state">
-
-											<option value="Andhra Pradesh"
-												<%="Andhra Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Andhra
-												Pradesh</option>
-											<option value="Arunachal Pradesh"
-												<%="Arunachal Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Arunachal
-												Pradesh</option>
-											<option value="Assam"
-												<%="Assam".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Assam</option>
-											<option value="Bihar"
-												<%="Bihar".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Bihar</option>
-											<option value="Chhattisgarh"
-												<%="Chhattisgarh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Chhattisgarh</option>
-											<option value="Goa"
-												<%="Goa".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Goa</option>
-											<option value="Gujarat"
-												<%="Gujarat".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Gujarat</option>
-											<option value="Haryana"
-												<%="Haryana".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Haryana</option>
-											<option value="Himachal Pradesh"
-												<%="Himachal Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Himachal
-												Pradesh</option>
-											<option value="Jharkhand"
-												<%="Jharkhand".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Jharkhand</option>
-											<option value="Karnataka"
-												<%="Karnataka".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Karnataka</option>
-											<option value="Kerala"
-												<%="Kerala".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Kerala</option>
-											<option value="Madhya Pradesh"
-												<%="Madhya Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Madhya
-												Pradesh</option>
-											<option value="Maharashtra"
-												<%="Maharashtra".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Maharashtra</option>
-											<option value="Manipur"
-												<%="Manipur".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Manipur</option>
-											<option value="Meghalaya"
-												<%="Meghalaya".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Meghalaya</option>
-											<option value="Mizoram"
-												<%="Mizoram".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Mizoram</option>
-											<option value="Nagaland"
-												<%="Nagaland".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Nagaland</option>
-											<option value="Odisha"
-												<%="Odisha".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Odisha</option>
-											<option value="Punjab"
-												<%="Punjab".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Punjab</option>
-											<option value="Rajasthan"
-												<%="Rajasthan".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Rajasthan</option>
-											<option value="Sikkim"
-												<%="Sikkim".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Sikkim</option>
-											<option value="Tamil Nadu"
-												<%="Tamil Nadu".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Tamil
-												Nadu</option>
-											<option value="Telangana"
-												<%="Telangana".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Telangana</option>
-											<option value="Tripura"
-												<%="Tripura".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Tripura</option>
-											<option value="Uttar Pradesh"
-												<%="Uttar Pradesh".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Uttar
-												Pradesh</option>
-											<option value="Uttarakhand"
-												<%="Uttarakhand".equals(user != null ? user.getState() : "") ? "selected" : ""%>>Uttarakhand</option>
-											<option value="West Bengal"
-												<%="West Bengal".equals(user != null ? user.getState() : "") ? "selected" : ""%>>West
-												Bengal</option>
-										</select>
-
-									</div>
-									<div class="form-group col-md-6">
-										<label for="country">Country:</label> <select
-											class="form-control" id="country" name="country">
-											<option value="India"
-												<%="India".equals(user != null ? user.getCountry() : "") ? "selected" : ""%>>India</option>
-
-											<!-- Add other options as needed -->
-										</select>
-									</div>
-								</div>
-
-
-								<button type="submit" class="btn btn-primary">Submit</button>
-							</form>
-						</div>
-					</div>
 
 					<div id="passwordModal" class="modal">
-						<div class="modal-content">
-							<span class="close">&times;</span>
-							<h2>Change Password</h2>
-							<form action="changePassword" method="post"
-								id="changePasswordForm">
-								<input type="hidden" name="userId"
-									value="<%=user != null ? user.getUserId() : ""%>">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Change Password</h2>
+        <form action="changePassword" method="post" id="changePasswordForm">
+            <input type="hidden" name="userId" id="passwordUserId" value="">
 
-								<div class="form-group">
-									<label for="currentPassword">Current Password:</label> <input
-										type="password" class="form-control" id="currentPassword"
-										name="currentPassword" required>
-								</div>
-								<div class="form-group">
-									<label for="newPassword">New Password:</label> <input
-										type="password" class="form-control" id="newPassword"
-										name="newPassword" required>
-									<div id="newPasswordError" class="error-message"></div>
-								</div>
-								<div class="form-group">
-									<label for="confirmPassword">Confirm Password:</label> <input
-										type="password" class="form-control" id="confirmPassword"
-										name="confirmPassword" required>
-									<div id="confirmPasswordError" class="error-message"></div>
-								</div>
+            <div class="form-group">
+                <label for="currentPassword">Current Password:</label>
+                <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="newPassword">New Password:</label>
+                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                <div id="newPasswordError" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                <div id="confirmPasswordError" class="error-message"></div>
+            </div>
 
-								<button type="submit" class="btn btn-primary">Submit</button>
-							</form>
-						</div>
-					</div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Get the modal element
+    var modal = document.getElementById("passwordModal");
 
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
 
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+  
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 
+    // Function to open the password modal and set userId
+    function openPasswordModal() {
+        var userId = getCookie("userId");
+        $('#passwordUserId').val(userId);
+        modal.style.display = "block";
+    }
 
+    // Utility function to get a cookie value by name
+    function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
 
-
-				</div>
-			</div>
-			
-			
-			
+    // Example usage
+    // openPasswordModal(); // Call this function when you want to open the modal
+});
+</script>
+					
 			
 			<script>
 			
-			var url = "http://localhost:8080/v1";
 			
-			
-			function getuserDetails() {
-			    var userId = document.getElementById("userid").value; // Assuming "userid" is an input field where the user ID is entered
-			    
-			    $.ajax({
-			        url: url + '/api/login/details',
-			        method: 'GET',
-			        data: { userId: userId },
-			        success: function (response) {
-			            $("#userId").text(response.id);
-			            $("#firstName").text(response.firstName);
-			            $(".check").show(); // Assuming you want to make the check div visible when data is fetched
-			        },
-			        error: function (xhr, status, error) {
-			            console.error("Error fetching user details:", error);
-			        }
-			    });
-			}
+			<!-- Include jQuery library -->
+			<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-			
-			
-			
-				document
-						.getElementById("changePasswordForm")
-						.addEventListener(
-								"submit",
-								function(event) {
-									event.preventDefault(); // Prevent form submission
-
-									var newPassword = document
-											.getElementById("newPassword").value;
-									var confirmPassword = document
-											.getElementById("confirmPassword").value;
-
-									if (newPassword !== confirmPassword) {
-										document
-												.getElementById("newPasswordError").textContent = "Passwords do not match.";
-										document
-												.getElementById("confirmPasswordError").textContent = "Passwords do not match.";
-									} else {
-										// Reset error messages if passwords match
-										document
-												.getElementById("newPasswordError").textContent = "";
-										document
-												.getElementById("confirmPasswordError").textContent = "";
-
-										// Submit form
-										this.submit();
-									}
-								});
-			</script>
 			<script>
-				document
-						.addEventListener(
-								"DOMContentLoaded",
-								function() {
-									// Phone number validation
-									var phoneInput = document
-											.getElementById("contact_no");
-									var form = document
-											.getElementById("profileForm"); // Replace "profileForm" with your form ID
+			$(document).ready(function() {
+			    // Open modal function
+			    function openModal(user) {
+			        $('#editModal').show();
+			        $('#userId').val(user.userId);
+			        $('#editFirstName').val(user.firstName);
+			        $('#editLastName').val(user.lastName);
+			        $('#editEmail').val(user.email);
+			        $('#editContact_no').val(user.contact_no);
+			        $('#editAddress').val(user.address);
+			        $('#editCity').val(user.city);
+			        $('#editState').val(user.state);
+			    }
 
-									phoneInput.addEventListener("input",
-											function() {
-												validatePhoneNumber();
-											});
-
-									phoneInput.addEventListener("blur",
-											function() {
-												validatePhoneNumber();
-											});
-
-									function validatePhoneNumber() {
-										var phoneNumber = phoneInput.value
-												.trim();
-										var errorElement = document
-												.getElementById("phoneError");
-
-										if (!/^\d{10}$/.test(phoneNumber)) {
-											errorElement.textContent = "Phone number must be 10 digits";
-											phoneInput.classList
-													.add("is-invalid");
-										} else {
-											errorElement.textContent = "";
-											phoneInput.classList
-													.remove("is-invalid");
-										}
-									}
-
-									// Prevent form submission if phone number is invalid
-									form.addEventListener("submit", function(
-											event) {
-										if (!isValidPhoneNumber()) {
-											event.preventDefault(); // Prevent form submission
-											validatePhoneNumber(); // Validate and show error message
-										}
-									});
-
-									// Function to check if phone number is valid
-									function isValidPhoneNumber() {
-										var phoneNumber = phoneInput.value
-												.trim();
-										return /^\d{10}$/.test(phoneNumber);
-									}
-								});
 			</script>
 
+				
+			
+	
 
 			<script src="./assets/js/app.js"></script>
+			
 			<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+			 
+                
 </body>
 </html>
 

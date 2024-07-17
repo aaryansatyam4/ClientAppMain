@@ -1,59 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Responsive Admin & Dashboard Template based on Bootstrap 5">
+<meta name="author" content="AdminKit">
+<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+<meta http-equiv="Cache-Control" content="no-store" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+<link rel="canonical" href="https://demo-basic.adminkit.io/pages-sign-in.html" />
+
+<title>NIC</title>
+
+<link href="./assets/css/app.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
 }
-
-body{
-    background-image: url('../pics/luis-reyes-mTorQ9gFfOg-unsplash.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    height: 100vh;
+    position: relative;
+    overflow: hidden;
 }
 
-.container{
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('./assets/img/photos/bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: blur(5px);
+    z-index: -1;
+}
+
+.container {
     background-color: #fff;
     border-radius: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-    position: relative;
-    overflow: hidden;
     width: 768px;
     max-width: 100%;
     min-height: 480px;
+    z-index: 1;
+    overflow: hidden;
+    position: relative;
+    padding: 20px;
 }
 
-.container p{
+.container p, .container span, .container a, .container button, .container form, .container input {
+    margin: 0;
+    padding: 0;
+}
+
+.container p {
     font-size: 14px;
     line-height: 20px;
     letter-spacing: 0.3px;
     margin: 20px 0;
 }
 
-.container span{
+.container span {
     font-size: 12px;
 }
 
-.container a{
+.container a {
     color: #333;
     font-size: 13px;
     text-decoration: none;
     margin: 15px 0 10px;
 }
 
-.container button{
+.container button {
     background-color: #512da8;
     color: #fff;
     font-size: 12px;
@@ -67,12 +104,12 @@ body{
     cursor: pointer;
 }
 
-.container button.hidden{
+.container button.hidden {
     background-color: transparent;
     border-color: #fff;
 }
 
-.container form{
+.container form {
     background-color: #fff;
     display: flex;
     align-items: center;
@@ -82,7 +119,7 @@ body{
     height: 100%;
 }
 
-.container input{
+.container input {
     background-color: #eee;
     border: none;
     margin: 8px 0;
@@ -93,53 +130,53 @@ body{
     outline: none;
 }
 
-.form-container{
+.form-container {
     position: absolute;
     top: 0;
     height: 100%;
     transition: all 0.6s ease-in-out;
 }
 
-.sign-in{
+.sign-in {
     left: 0;
     width: 50%;
     z-index: 2;
 }
 
-.container.active .sign-in{
-    transform: translateX(100%);
-}
-
-.sign-up{
+.sign-up {
     left: 0;
     width: 50%;
     opacity: 0;
     z-index: 1;
 }
 
-.container.active .sign-up{
+.container.active .sign-in {
+    transform: translateX(100%);
+}
+
+.container.active .sign-up {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
     animation: move 0.6s;
 }
 
-@keyframes move{
-    0%, 49.99%{
+@keyframes move {
+    0%, 49.99% {
         opacity: 0;
         z-index: 1;
     }
-    50%, 100%{
+    50%, 100% {
         opacity: 1;
         z-index: 5;
     }
 }
 
-.social-icons{
+.social-icons {
     margin: 20px 0;
 }
 
-.social-icons a{
+.social-icons a {
     border: 1px solid #ccc;
     border-radius: 20%;
     display: inline-flex;
@@ -150,7 +187,7 @@ body{
     height: 40px;
 }
 
-.toggle-container{
+.toggle-container {
     position: absolute;
     top: 0;
     left: 50%;
@@ -162,12 +199,12 @@ body{
     z-index: 1000;
 }
 
-.container.active .toggle-container{
+.container.active .toggle-container {
     transform: translateX(-100%);
     border-radius: 0 150px 100px 0;
 }
 
-.toggle{
+.toggle {
     background-color: #512da8;
     height: 100%;
     background: linear-gradient(to right, #5c6bc0, #512da8);
@@ -180,11 +217,11 @@ body{
     transition: all 0.6s ease-in-out;
 }
 
-.container.active .toggle{
+.container.active .toggle {
     transform: translateX(50%);
 }
 
-.toggle-panel{
+.toggle-panel {
     position: absolute;
     width: 50%;
     height: 100%;
@@ -199,64 +236,64 @@ body{
     transition: all 0.6s ease-in-out;
 }
 
-.toggle-left{
+.toggle-left {
     transform: translateX(-200%);
 }
 
-.container.active .toggle-left{
+.container.active .toggle-left {
     transform: translateX(0);
 }
 
-.toggle-right{
+.toggle-right {
     right: 0;
     transform: translateX(0);
 }
 
-.container.active .toggle-right{
+.container.active .toggle-right {
     transform: translateX(200%);
 }
+
 </style>
 </head>
 <body>
+<div class="background-image"></div>
 <div class="container" id="container">
     <div class="form-container sign-up">
         <form method="POST" action="">
-           
-            <span>or use your email for registration</span>
-            <input type="text" name="name" placeholder="Name">
-            <input type="email" name="email" placeholder="Email">
-            <input type="password" name="password" placeholder="Password">
-            <button type="submit" name="register">Sign Up</button>
+            <h1>More info</h1>
+            Give info
+       <a href="https://aaryansatyam4.github.io/aryanresume/">
+  <button type="button">More info</button>
+</a>
+       
         </form>
     </div>
     <div class="form-container sign-in">
-        <form method="POST" action="">
+        <form method="POST" onsubmit="checkCredentials(event)">
             <h1>Sign In</h1>
-            <div class="social-icons">
-                <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
-                <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
-                <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
-            </div>
-            <span>or use your email and password</span>
-            <input type="email" name="email" placeholder="Email">
-            <input type="password" name="password" placeholder="Password">
             
-            <a href="#">Forgot Your Password?</a>
-            <button type="submit" name="login">Sign In</button>
+            <input type="text" name="username" id="username" placeholder="Enter your username">
+            <input type="password" name="password" id="password" placeholder="Enter your password">
+            <span id="username_msg" style="color: red; font-size: 10px;"></span>
+            <span id="password_msg" style="color: red; font-size: 10px;"></span>
+            <div class="form-check align-items-center">
+               
+            </div>
+            <button type="submit" class="btn btn-lg btn-primary">Sign in</button>
+            
         </form>
     </div>
     <div class="toggle-container">
         <div class="toggle">
             <div class="toggle-panel toggle-left">
                 <h1>Welcome Back!</h1>
-                <p>Enter your personal details to use all of site features</p>
-                <button class="hidden" id="login">Sign In</button>
+                <p>Enter your personal details to use all of site's features</p>
+                <button class="hidden" id="signIn">Sign In</button>
             </div>
             <div class="toggle-panel toggle-right">
-                <h1>Hello, Friend!</h1>
-                <p>Register with your personal details to use all of site features</p>
-                <button class="hidden" id="register">Sign Up</button>
+                <h1>More Info</h1>
+                <p>For more info contact </p>
+                <button class="hidden" id="signUp">More info</button>
             </div>
         </div>
     </div>
@@ -264,16 +301,80 @@ body{
 
 <script>
 const container = document.getElementById('container');
-const registerBtn = document.getElementById('register');
-const loginBtn = document.getElementById('login');
+const signInButton = document.getElementById('signIn');
+const signUpButton = document.getElementById('signUp');
 
-registerBtn.addEventListener('click', () => {
-    container.classList.add("active");
+signUpButton.addEventListener('click', () => {
+    container.classList.add('active');
 });
 
-loginBtn.addEventListener('click', () => {
-    container.classList.remove("active");
+signInButton.addEventListener('click', () => {
+    container.classList.remove('active');
 });
+
+
+
+
+
+var baseURL = "http://localhost:8080/v1/"
+
+	function checkCredentials(event) {
+		//alert("checkCredientials");
+		event.preventDefault();
+		var userName = $("#username").val();
+		var password = $("#password").val();
+		if (userName == "") {
+			$("#username_msg").html("Username can't be empty")
+			
+			//location.href = baseURL;
+			return false;
+		}
+		if (password == "") {
+			$("#password_msg").html("Password can't be empty")
+			
+			//location.href = baseURL;
+			return false;
+		}
+
+		var url = baseURL + "api/login/check/credentials";
+		//alert(url);
+		
+		$.ajax({
+	        url: url,
+	        type: "POST",
+	        data: {
+	            userName: userName,
+	            password: password
+	        },
+	        success: function(result) {
+	            result = JSON.parse(result);
+	            //alert("Result: "+ result.message());
+	            
+	            if (result.status === "success") {
+					//alert("Success");
+					if(result.role === "super_admin"){
+	                	window.location.href = "super.jsp";
+	                }
+	                else if(result.role === "Admin"){
+						window.location.href = "admin.jsp";
+					}
+					else{
+						//alert("Success 2");
+						window.location.href = "ed.jsp";
+					}
+	            } else {
+	                //alert("Login failed: " + result.message);
+	                $("#msg").html("Invalid Credentials!")
+	            }
+	        }
+	    });
+	    return false;
+	}
 </script>
+
+<script src="./assets/js/app.js"></script>
+<script src="./assets/js/jquery.min.js"></script>
+<script src="./assets/js/popper.min.js"></script>
+<script src="./assets/js/bootstrap.min.js"></script>
 </body>
 </html>

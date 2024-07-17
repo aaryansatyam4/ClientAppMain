@@ -14,7 +14,7 @@
 <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
 <link rel="canonical" href="https://demo-basic.adminkit.io/pages-sign-in.html" />
 
-<title>Nic</title>
+<title>N.I.C</title>
 
 <link href="./assets/css/app.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -309,64 +309,9 @@ signInButton.addEventListener('click', () => {
     container.classList.remove('active');
 });
 </script>
-<Script>
-var baseURL = "http://localhost:8080/v1/"
-
-	function checkCredentials(event) {
-		//alert("checkCredientials");
-		event.preventDefault();
-		var userName = $("#username").val();
-		var password = $("#password").val();
-		if (userName == "") {
-			$("#username_msg").html("Username can't be empty")
-			
-			//location.href = baseURL;
-			return false;
-		}
-		if (password == "") {
-			$("#password_msg").html("Password can't be empty")
-			
-			//location.href = baseURL;
-			return false;
-		}
-
-		var url = baseURL + "api/login/check/credentials";
-		//alert(url);
-		
-		$.ajax({
-	        url: url,
-	        type: "POST",
-	        data: {
-	            userName: userName,
-	            password: password
-	        },
-	        success: function(result) {
-	            result = JSON.parse(result);
-	            //alert("Result: "+ result.message());
-	            
-	            if (result.status === "success") {
-					//alert("Success");
-					if(result.role === "super_admin"){
-	                	window.location.href = "super.jsp";
-	                }
-	                else if(result.role === "admin"){
-						window.location.href = "admin.jsp";
-					}
-					else{
-						window.location.href = "employee_dashboard.jsp";
-					}
-	            } else {
-	                //alert("Login failed: " + result.message);
-	                $("#msg").html("Invalid Credentials!")
-	            }
-	        }
-	    });
-	    return false;
-	}
-</Script>
 
 <script src="./assets/js/app.js"></script>
-
+<script src="./assets/js/index.js"></script>
 <script src="./assets/js/jquery.min.js"></script>
 <script src="./assets/js/popper.min.js"></script>
 <script src="./assets/js/bootstrap.min.js"></script>

@@ -1,216 +1,317 @@
+
+/* Global reset and base styles */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
 body {
-    margin-top: 20px;
-    color: #1a202c;
-    text-align: left;
-    background-color: #e2e8f0;
+	font-family: 'Inter', sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+	background-color: #f8f9fa;
+	color: #343a40;
 }
 
-.heading {
-    text-align: center;
-    margin: 20px 0;
-    padding: 15px;
-    position: relative; /* For positioning the icon */
-    color: white;
+.wrapper {
+	display: flex;
+	width: 100%;
+	height: 100vh;
 }
 
-.heading h1 {
-    margin: 0;
-    font-size: 2.5rem;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.edit-icon-container {
-    position: absolute;
-    top: 50%;
-    right: 20px; /* Adjust as needed */
-    transform: translateY(-50%);
-    font-size: 2.5rem; /* Enlarge the icon */
-    cursor: pointer;
-    color: #007bff; /* Icon color */
-}
-
-.edit-icon-container:hover .edit-icon {
-    color: #0056b3; /* Darker color on hover */
-}
-
-.edit-icon {
-    cursor: pointer;
-    color: #007bff;
-    font-size: 1.5rem;
-    margin-left: 10px;
-}
-
-.edit-icon:hover {
-    color: #0056b3;
+/
+.main {
+	flex: 1;
+	padding: 20px;
 }
 
 .main-body {
-    padding: 15px;
+	padding: 20px;
 }
 
+.heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 20px;
+}
+
+.heading h1 {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.edit-icon-container {
+	position: relative;
+}
+
+.edit-icon {
+	font-size: 24px;
+	color: #007bff;
+	cursor: pointer;
+}
+
+/* Card styles */
 .card {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 0 solid rgba(0, 0, 0, .125);
-    border-radius: .25rem;
+	border: none;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.card-body {
-    flex: 1 1 auto;
-    min-height: 1px;
-    padding: 1rem;
+.card-img-top {
+	width: 150px;
+	height: 150px;
+	object-fit: cover;
+	border-radius: 50%;
 }
 
-.gutters-sm {
-    margin-right: -8px;
-    margin-left: -8px;
+.card-title {
+	margin-top: 10px;
+	font-size: 24px;
+	font-weight: bold;
 }
 
-.gutters-sm>.col, .gutters-sm>[class*=col-] {
-    padding-right: 8px;
-    padding-left: 8px;
+.card-text {
+	color: #777;
+	margin-bottom: 20px;
 }
 
-.mb-3, .my-3 {
-    margin-bottom: 1rem !important;
+.btn {
+	margin-top: 10px;
 }
 
-.bg-gray-300 {
-    background-color: #e2e8f0;
+/* Profile details styles */
+.row {
+	margin-bottom: 20px;
 }
 
-.h-100 {
-    height: 100% !important;
+.row h6 {
+	font-weight: bold;
 }
 
-.shadow-none {
-    box-shadow: none !important;
+.text-secondary {
+	color: #777;
 }
 
-/* Modal styling */
+.hr {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: none;
+	border-top: 1px solid #ddd;
+}
+
+/* Modal styles */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    padding-top: 60px;
+	display: none; /* Hidden by default */
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%; /* Adjust width as needed */
+	max-width: 600px; /* Maximum width */
+	border-radius: 10px; /* Rounded corners */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	/* Optional: Add shadow for a better look */
 }
 
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
 }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+.close:hover, .close:focus {
+	color: #000;
+	text-decoration: none;
 }
 
-/* Flexbox for aligning form elements */
+/* Form styles */
 .form-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-bottom: 1rem;
+	margin-bottom: 15px;
 }
 
 .form-group {
-    flex: 1;
-    min-width: 150px; /* Adjust based on design needs */
-    margin-right: 10px;
-}
-
-.form-group:last-child {
-    margin-right: 0;
-}
-
-/* Form styling */
-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    display: inline-block;
-}
-
-input[type=text], input[type=email], input[type=password], select {
-    width: 100%;
-    padding: 8px;
-    margin: 4px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-button[type=submit] {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin-top: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-button[type=submit]:hover {
-    background-color: #0056b3;
-}
-
-.modal-content {
-    padding: 10px; /* Reduce overall padding */
-}
-
-.form-group {
-    margin-bottom: 15px; /* Adjust spacing between each form-group */
+	margin-bottom: 15px;
 }
 
 .form-group label {
-    display: block; /* Ensure labels appear on their own line */
-    margin-bottom: 5px; /* Adjust spacing between labels and inputs */
+	font-weight: bold;
 }
 
 .form-control {
-    padding: 8px; /* Adjust input padding */
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 14px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .heading h1 {
-        font-size: 2rem;
-    }
+.select-container {
+	width: 100%;
+	margin-bottom: 15px;
+}
 
-    .edit-icon-container {
-        right: 10px; /* Adjust positioning for smaller screens */
-        font-size: 2rem; /* Adjust icon size for smaller screens */
-    }
+.select-container label {
+	display: block;
+	font-weight: bold;
+}
+
+.select-container select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+/* Button styles */
+.btn-primary {
+	background-color: #007bff;
+	border-color: #007bff;
+	color: #fff;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.btn-primary:hover {
+	background-color: #0069d9;
+	border-color: #0062cc;
+}
+
+.btn-outline-primary {
+	color: #007bff;
+	border-color: #007bff;
+	padding: 8px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.btn-outline-primary:hover {
+	background-color: #007bff;
+	color: #fff;
+}
+
+/* Responsive adjustments */
+@media ( max-width : 992px) {
+	.sidebar {
+		display: none;
+	}
+	.main {
+		width: 100%;
+	}
+}
+
+@media ( max-width : 768px) {
+	.modal-content {
+		width: 95%;
+	}
+}
+</Style>
+<Style>
+/* Edit modal specific styles */
+#editModal .modal-content {
+	background-color: #fefefe;
+	margin: 7% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%; /* Adjust width as needed */
+	max-width: 600px; /* Maximum width */
+	border-radius: 10px; /* Rounded corners */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	/* Optional: Add shadow for a better look */
+}
+
+#editModal .close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#editModal .close:hover, #editModal .close:focus {
+	color: #000;
+	text-decoration: none;
+}
+
+#editModal .form-row {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 15px;
+}
+
+#editModal .form-row .form-group {
+	width: 48%; /* Adjust width to fit both inputs on one line */
+}
+
+#editModal .form-group label {
+	font-weight: bold;
+}
+
+#editModal .form-control {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+#editModal .select-container {
+	width: 100%;
+	margin-bottom: 15px;
+}
+
+#editModal .select-container label {
+	display: block;
+	font-weight: bold;
+}
+
+#editModal .select-container select {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+#editModal .btn-primary {
+	background-color: #007bff;
+	border-color: #007bff;
+	color: #fff;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+#editModal .btn-primary:hover {
+	background-color: #0069d9;
+	border-color: #0062cc;
+}
+
+#editModal .btn-outline-primary {
+	color: #007bff;
+	border-color: #007bff;
+	padding: 8px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+#editModal .btn-outline-primary:hover {
+	background-color: #007bff;
+	color: #fff;
 }

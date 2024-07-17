@@ -13,7 +13,7 @@
     Cookie[] cookies = request.getCookies();
     if (cookies != null) {
         for (Cookie cookie : cookies) {
-            if ("username".equals(cookie.getName())) {
+            if ("user".equals(cookie.getName())) {
                 username = cookie.getValue();
                 break;
             }
@@ -39,7 +39,7 @@
             <% if ("super_admin".equals(position)) { %>
                 <li>
                     <select id="plant" class="form-control browser-default custom-select">
-                        <option value="Global">Global</option>
+                        <option value="global">Global</option>
                         <option value="Plant1">Plant1</option>
                         <option value="Plant2">Plant2</option>
                         <option value="Plant3">Plant3</option>
@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (alertsDropdown) {
         alertsDropdown.addEventListener("click", function() {
             const username = "<%= username %>";
+          
 
             fetch("MarkNotificationsReadServlet", {
                 method: "POST",
@@ -111,6 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(response => response.text())
             .then(result => {
+                
                 if (result === "success") {
                     console.log("Notifications marked as read.");
                 } else {
@@ -122,3 +124,4 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
+

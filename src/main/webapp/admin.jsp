@@ -1,540 +1,986 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description"
-	content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
-<meta name="author" content="AdminKit">
-<meta name="keywords"
-	content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
-
-<link rel="preconnect" href="https://fonts.gstatic.com">
-<link rel="shortcut icon" href="./assets/img/icons/icon-48x48.png" />
-
-<link rel="canonical" href="https://demo-basic.adminkit.io/" />
-
-<title>AdminKit Demo - Bootstrap 5 Admin Template</title>
-
-<link href="./assets/css/app.css" rel="stylesheet">
-<link
-	href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
-	rel="stylesheet">
-
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <!-- Include your CSS and other head elements -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Responsive Admin & Dashboard Template based on Bootstrap 5">
+    <meta name="author" content="AdminKit">
+    <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="shortcut icon" href="./assets/img/icons/icon-48x48.png" />
+    <link rel="canonical" href="https://demo-basic.adminkit.io/" />
+    <link href="./assets/css/app.css" rel="stylesheet">
+    <link href="./assets/css/ed.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 </head>
 
+<style>
+
+    .preloader {
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+        backdrop-filter: blur(10px); /* Adjust blur radius as needed */
+        -webkit-backdrop-filter: blur(10px); /* For Safari */
+        height: 100vh; /* Full viewport height */
+        width: 100vw; /* Full viewport width */
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .preloader::before {
+        content: '';
+        background: url("./assets/img/photos/preloader.png") no-repeat center center;
+        background-size: 300px; /* Fixed size for the preloader image */
+        width: 300px; /* Fixed width for the preloader image */
+        height: 300px; /* Fixed height for the preloader image */
+        position: absolute;
+        animation: rotate 15s infinite linear; /* Rotation animation */
+    }
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+    <style>
+        /* Custom CSS for severity classes */
+        .severity-high {
+            background-color: #dc3545; /* Red background for high severity */
+            color: white; /* White text color */
+        }
+
+        .severity-medium {
+            background-color: #ffc107; /* Yellow background for medium severity */
+            color: black; /* Black text color */
+        }
+
+        .severity-low {
+            background-color: #17a2b8; /* Blue background for low severity */
+            color: white; /* White text color */
+        }
+    </style>
+
 <body>
+    <script>
+        // JavaScript to hide the preloader after a delay
+        document.addEventListener("DOMContentLoaded", function() {
+            var loader = document.getElementById("preloader");
 
-	<div class="wrapper">
+            // Add a delay of 1.5 seconds (1500 milliseconds) before hiding the preloader
+            setTimeout(function () {
+                loader.style.display = "none";
+            }, 1500);
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        var allAssignedTasks = [];
+        var allTasksFromApi = [];
+        var currentPage = 1;
+        var pageSize = 10; // Number of tasks per page
 
-		<jsp:include page="sidebar.jsp"></jsp:include>
+        // Initial load for both tables
+        getAssignedTaskDetails();
+        getTasksFromApi();
 
+        function getAssignedTaskDetails() {
+            $.ajax({
+                url: 'http://localhost:8080/v1/api/t/created',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    page: currentPage,
+                    size: pageSize
+                },
+                success: function(response) {
+                    if (response.status === "success") {
+                        allAssignedTasks = JSON.parse(response.tickets);
+                        populateAssignedTaskTable(allAssignedTasks);
+                        updateCounts(allAssignedTasks);
+                        renderPagination(response.totalPages);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Error retrieving assigned task details');
+                }
+            });
+        }
 
-		<div class="main">
+        function getTasksFromApi() {
+        	 $.ajax({
+                 url: 'http://localhost:8080/v1/api/t/c',
+                 type: 'GET',
+                 dataType: 'json',
+                 data: {
+                     page: currentPage,
+                     size: pageSize
+                 },
+                 success: function(response) {
+                     if (response.status === "success") {
+                         allAssignedTasks = JSON.parse(response.tickets);
+                         populateTasksFromApiTable(allAssignedTasks);
+                         updateCounts(allAssignedTasks);
+                         renderPagination(response.totalPages);
+                     } else {
+                         alert(response.message);
+                     }
+                 },
+                 error: function() {
+                     alert('Error retrieving assigned task details');
+                 }
+             });
+        }
 
-			<jsp:include page="nav.jsp"></jsp:include>
+        function populateAssignedTaskTable(tasks) {
+            $('#taskTable tbody').empty();
 
-			<main class="content">
-				<div class="container-fluid p-0">
+            let assignedTasks = tasks.filter(task => task.status && task.status.toLowerCase() !== 'completed');
 
-					<div class="row">
-						<div class="col-xl-12 col-xxl-12 d-flex">
-							<div class="w-100">
-								<div class="row">
-								
-									<div class="col-sm-3">
-										<div class="card super_critical">
-											<div class="card-body">
-												<div class="row">
-													<div class="col mt-0">
-														<h5 class="card-title">Super Critical</h5>
-													</div>
+            if (assignedTasks.length === 0) {
+                $('#taskTable tbody').append('<tr><td colspan="8" class="text-center">No Assigned Tasks</td></tr>');
+            } else {
+                $.each(assignedTasks, function(index, task) {
+                    // Parse and format DueDate and createdAt
+                    var dueDate = new Date(task.DueDate);
+                    var formattedDueDate = dueDate.toLocaleDateString(); // Formats the date as mm/dd/yyyy by default
+                    
+                    var createdAt = new Date(task.createdAt);
+                    var formattedCreatedAt = createdAt.toLocaleDateString();
 
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="fa fa-line-chart" aria-hidden="true"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3">2.382</h1>
-												<div class="mb-0">
-													<span class="text-danger"><i
-														class="align-middle me-2" data-feather="trending-down"></i>
-														<i class="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
-													<p class="text-muted">Since last week</p>
-												</div>
-											</div>
-										</div>
-									</div>
-
-									<div class="col-sm-3">
-										<div class="card critical">
-											<div class="card-body">
-												<div class="row">
-													<div class="col mt-0">
-														<h5 class="card-title">Critical</h5>
-													</div>
-
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="align-middle" data-feather="users"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3 ">14.212</h1>
-												<div class="mb-0">
-													<span class="text-success"><i
-														class="align-middle me-2" data-feather="trending-up"></i>
-														<i class="mdi mdi-arrow-bottom-right"></i> 5.25% </span>
-													<p class="text-muted">Since last week</p>
-												</div>
-											</div>
-										</div>
-									</div>
-									
-									<div class="col-sm-3">
-										<div class="card">
-											<div class="card-body">
-												<div class="row">
-													<div class="col mt-0">
-														<h5 class="card-title">Pending</h5>
-													</div>
-
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="fa fa-inr" aria-hidden="true"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3">
-													<i class="fa fa-inr" aria-hidden="true"></i>21.300
-												</h1>
-												<div class="mb-0">
-													<span class="text-success"><i
-														class="align-middle me-2" data-feather="trending-up"></i> <i
-														class="mdi mdi-arrow-bottom-right"></i> 6.65%
-													</span>
-													<p class="text-muted">Since last week</p>
-												</div>
-											</div>
-										</div>
-									</div>
-
-									<div class="col-sm-3">
-										<div class="card">
-											<div class="card-body">
-												<div class="row">
-													<div class="col mt-0">
-														<h5 class="card-title">Closed</h5>
-													</div>
-
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<i class="align-middle" data-feather="shopping-cart"></i>
-														</div>
-													</div>
-												</div>
-												<h1 class="mt-1 mb-3">64</h1>
-												<div class="mb-0">
-													<span class="text-danger"><i
-														class="align-middle me-2" data-feather="trending-down"></i> <i
-														class="mdi mdi-arrow-bottom-right"></i> -2.25%
-													</span>
-													<p class="text-muted">Since last week</p>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-xl-12 col-xxl-12">
-							 
-							<div class="card flex-fill w-100">
-								<div class="card-header">
-									<h5 class="card-title">Task Chart</h5>
-								</div>
-								<div class="card-body">
-									<div class="chart">
-										<canvas id="chartjs-line"></canvas>
-									</div>
-								</div>
-							</div>
-						 
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
-
-									<h5 class="card-title mb-0">Total Output</h5>
-								</div>
-								<div class="card-body d-flex">
-									<div class="align-self-center w-100">
-										<div class="py-3">
-											<div class="chart chart-xs">
-												<canvas id="chartjs-dashboard-pie"></canvas>
-											</div>
-										</div>
-
-										<table class="table mb-0">
-											<tbody>
-												<tr>
-													<td>Plant1</td>
-													<td class="text-end">4306</td>
-												</tr>
-												<tr>
-													<td>Plant2</td>
-													<td class="text-end">3801</td>
-												</tr>
-												<tr>
-													<td>Plant3</td>
-													<td class="text-end">1689</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-						
-						
-					</div>
-
-					<div class="row">
-						<div class="col-12 col-lg-8 col-xxl-9 d-flex">
-							<div class="card flex-fill">
-								<div class="card-header">
-
-									<h5 class="card-title mb-0">Ongoing Tasks</h5>
-								</div>
-								<table class="table table-hover my-0">
-									<thead>
-										<tr>
-											<th>Name</th>
-											<th class="d-none d-xl-table-cell">Start Date</th>
-											<th class="d-none d-xl-table-cell">End Date</th>
-											<th>Status</th>
-											<th class="d-none d-md-table-cell">Assignee</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Project Apollo</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Vanessa Tucker</td>
-										</tr>
-										<tr>
-											<td>Project Fireball</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-danger">Cancelled</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
-										<tr>
-											<td>Project Hades</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Sharon Lessman</td>
-										</tr>
-										<tr>
-											<td>Project Nitro</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-warning">In progress</span></td>
-											<td class="d-none d-md-table-cell">Vanessa Tucker</td>
-										</tr>
-										<tr>
-											<td>Project Phoenix</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
-										<tr>
-											<td>Project X</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Sharon Lessman</td>
-										</tr>
-										<tr>
-											<td>Project Romeo</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Christina Mason</td>
-										</tr>
-										<tr>
-											<td>Project Wombat</td>
-											<td class="d-none d-xl-table-cell">01/01/2023</td>
-											<td class="d-none d-xl-table-cell">31/06/2023</td>
-											<td><span class="badge bg-warning">In progress</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="col-12 col-lg-4 col-xxl-3 d-flex">
-							<div class="card flex-fill w-100">
-								<div class="card-header">
-
-									<h5 class="card-title mb-0">Monthly Sales</h5>
-								</div>
-								<div class="card-body d-flex w-100">
-									<div class="align-self-center chart chart-lg">
-										<canvas id="chartjs-dashboard-bar"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-				</div>
-			</main>
+                    var rowHtml = '<tr>';
+                    rowHtml += '<td class="d-none d-xl-table-cell">' + task.ticketId + '</td>';
+                    rowHtml += '<td>' + task.title + '</td>';
+                    rowHtml += '<td><span class="badge ' + getSeverityClass(task.severity.toLowerCase()) + '">' + task.severity + '</span></td>';
+                    rowHtml += '<td class="d-none d-md-table-cell">' + task.createdBy + '</td>';
+                    rowHtml += '<td class="d-none d-md-table-cell">' + task.assignee + '</td>';
+                    rowHtml += '<td class="d-none d-md-table-cell">' + formattedCreatedAt + '</td>';
+                    rowHtml += '<td class="d-none d-md-table-cell">' + formattedDueDate + '</td>';
+                    rowHtml += '</tr>';
+                    $('#taskTable tbody').append(rowHtml);
+                });
+            }
+        }
 
 
-			<jsp:include page="footer.jsp"></jsp:include>
-		</div>
-	</div>
+        function populateTasksFromApiTable(tasks) {
+            $('#taskTableApi tbody').empty();
 
-	<script src="./assets/js/app.js"></script>
+            let assignedTasks = tasks.filter(task => task.status && task.status.toLowerCase() !== 'completed');
 
-	 
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			// Pie chart
-			new Chart(document.getElementById("chartjs-dashboard-pie"), {
-				type: "pie",
-				data: {
-					labels: ["Plant1", "Plant2", "Plant3"],
-					datasets: [{
-						data: [4306, 3801, 1689],
-						backgroundColor: [
-							window.theme.primary,
-							window.theme.warning,
-							window.theme.danger
-						],
-						borderWidth: 5
-					}]
-				},
-				options: {
-					responsive: !window.MSInputMethodContext,
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					cutoutPercentage: 75
-				}
-			});
-		});
-	</script>
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			// Bar chart
-			new Chart(document.getElementById("chartjs-dashboard-bar"), {
-				type: "bar",
-				data: {
-					labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-					datasets: [{
-						label: "This year",
-						backgroundColor: window.theme.primary,
-						borderColor: window.theme.primary,
-						hoverBackgroundColor: window.theme.primary,
-						hoverBorderColor: window.theme.primary,
-						data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
-						barPercentage: .75,
-						categoryPercentage: .5
-					}]
-				},
-				options: {
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					scales: {
-						yAxes: [{
-							gridLines: {
-								display: false
-							},
-							stacked: false,
-							ticks: {
-								stepSize: 20
-							}
-						}],
-						xAxes: [{
-							stacked: false,
-							gridLines: {
-								color: "transparent"
-							}
-						}]
-					}
-				}
-			});
-		});
-	 
-		document.addEventListener("DOMContentLoaded", function() {
-			var markers = [{
-					coords: [31.230391, 121.473701],
-					name: "Shanghai"
-				},
-				{
-					coords: [28.704060, 77.102493],
-					name: "Delhi"
-				},
-				{
-					coords: [6.524379, 3.379206],
-					name: "Lagos"
-				},
-				{
-					coords: [35.689487, 139.691711],
-					name: "Tokyo"
-				},
-				{
-					coords: [23.129110, 113.264381],
-					name: "Guangzhou"
-				},
-				{
-					coords: [40.7127837, -74.0059413],
-					name: "New York"
-				},
-				{
-					coords: [34.052235, -118.243683],
-					name: "Los Angeles"
-				},
-				{
-					coords: [41.878113, -87.629799],
-					name: "Chicago"
-				},
-				{
-					coords: [51.507351, -0.127758],
-					name: "London"
-				},
-				{
-					coords: [40.416775, -3.703790],
-					name: "Madrid "
-				}
-			];
-			var map = new jsVectorMap({
-				map: "world",
-				selector: "#world_map",
-				zoomButtons: true,
-				markers: markers,
-				markerStyle: {
-					initial: {
-						r: 9,
-						strokeWidth: 7,
-						stokeOpacity: .4,
-						fill: window.theme.primary
-					},
-					hover: {
-						fill: window.theme.primary,
-						stroke: window.theme.primary
-					}
-				},
-				zoomOnScroll: false
-			});
-			window.addEventListener("resize", () => {
-				map.updateSize();
-			});
-		});
-	 
-		document.addEventListener("DOMContentLoaded", function() {
-			var date = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
-			var defaultDate = date.getUTCFullYear() + "-" + (date.getUTCMonth() + 1) + "-" + date.getUTCDate();
-			document.getElementById("datetimepicker-dashboard").flatpickr({
-				inline: true,
-				prevArrow: "<span title=\"Previous month\">&laquo;</span>",
-				nextArrow: "<span title=\"Next month\">&raquo;</span>",
-				defaultDate: defaultDate
-			});
-		});
-		
-		
-		document.addEventListener("DOMContentLoaded", function() {
-			// Line chart
-			new Chart(document.getElementById("chartjs-line"), {
-				type: "line",
-				data: {
-					labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-					datasets: [{
-						label: "Plant 1",
-						fill: true,
-						backgroundColor: "transparent",
-						borderColor: window.theme.success,
-						data: [2115, 1562, 1584, 1892, 1487, 2223, 2966, 2448, 2905, 3838, 2917, 3327]
-					}, {
-						label: "Plant 2",
-						fill: true,
-						backgroundColor: "transparent",
-						borderColor: window.theme.danger,
-						borderDash: [4, 0],
-						data: [958, 724, 629, 883, 915, 1214, 1476, 1212, 1554, 2128, 1466, 1827]
-					},{
-						label: "Plant 3",
-						fill: true,
-						backgroundColor: "transparent",
-						borderColor: window.theme.primary,
-						borderDash: [4, 0],
-						data: [850, 704, 129, 883, 1115, 1014, 1776, 1112, 1604, 2528, 2466, 2827]
-					}]
-				},
-				options: {
-					maintainAspectRatio: false,
-					legend: {
-						display: false
-					},
-					tooltips: {
-						intersect: false
-					},
-					hover: {
-						intersect: true
-					},
-					plugins: {
-						filler: {
-							propagate: false
-						}
-					},
-					scales: {
-						xAxes: [{
-							reverse: true,
-							gridLines: {
-								color: "rgba(0,0,0,0.05)"
-							}
-						}],
-						yAxes: [{
-							ticks: {
-								stepSize: 500
-							},
-							display: true,
-							borderDash: [5, 5],
-							gridLines: {
-								color: "rgba(0,0,0,0)",
-								fontColor: "#fff"
-							}
-						}]
-					}
-				}
-			});
-		});
-	</script>
+            if (assignedTasks.length === 0) {
+                $('#taskTableApi tbody').append('<tr><td colspan="8" class="text-center">No Assigned Tasks</td></tr>');
+            } else {
+                $.each(assignedTasks, function(index, task) {
+                    // Parse and format DueDate
+                    var dueDate = new Date(task.DueDate);
+                    var formattedDueDate = dueDate.toLocaleDateString(); // Formats the date as mm/dd/yyyy by default
 
+                    var rowHtml = '<tr>';
+                    rowHtml += '<td class="d-none d-xl-table-cell">' + task.ticketId + '</td>';
+                    rowHtml += '<td>' + task.title + '</td>';
+                    rowHtml += '<td>' + task.status + '</td>';
+                    rowHtml += '<td><span class="badge ' + getSeverityClass(task.severity.toLowerCase()) + '">' + task.severity + '</span></td>';
+                    rowHtml += '<td class="d-none d-md-table-cell">' + task.createdBy + '</td>';
+                    rowHtml += '<td class="d-none d-md-table-cell">' + formattedDueDate + '</td>';
+                    rowHtml += '<td><button class="btn btn-primary" onclick="openModal(' + task.ticketId + ')">Action</button></td>';
+                    rowHtml += '</tr>';
+                    $('#taskTableApi tbody').append(rowHtml);
+                });
+            }
+        }
+
+
+        function renderPagination(totalPages) {
+            $('#pagination').empty();
+            var paginationHtml = '';
+
+            paginationHtml += '<li class="page-item ' + (currentPage === 1 ? 'disabled' : '') + '">';
+            paginationHtml += '<a class="page-link" href="#" onclick="navigateToPage(' + (currentPage - 1) + ')">Previous</a>';
+            paginationHtml += '</li>';
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += '<li class="page-item ' + (currentPage === i ? 'active' : '') + '">';
+                paginationHtml += '<a class="page-link" href="#" onclick="navigateToPage(' + i + ')">' + i + '</a>';
+                paginationHtml += '</li>';
+            }
+            paginationHtml += '<li class="page-item ' + (currentPage === totalPages ? 'disabled' : '') + '">';
+            paginationHtml += '<a class="page-link" href="#" onclick="navigateToPage(' + (currentPage + 1) + ')">Next</a>';
+            paginationHtml += '</li>';
+
+            $('#pagination').append(paginationHtml);
+        }
+
+        window.navigateToPage = function(pageNumber) {
+            currentPage = pageNumber;
+            getAssignedTaskDetails();
+        };
+    
+
+
+        function updateCounts(tasks) {
+            var pendingCount = 0;
+            var completedCount = 0;
+            var highSeverityCount = 0;
+            var mediumSeverityCount = 0;
+            var lowSeverityCount = 0;
+
+            var monthlyCompletedCount = Array(12).fill(0);
+
+            // Check if tasks array is empty
+            if (tasks.length === 0) {
+                $('#pending-count').text(0);
+                $('#completed-count').text(0);
+                $('#total-count').text(0);
+                $('#high-severity-count').text(0);
+                $('#medium-severity-count').text(0);
+                $('#low-severity-count').text(0);
+
+                renderMonthlyCompletedChart(monthlyCompletedCount);
+               
+                renderSeverityChart(highSeverityCount, mediumSeverityCount, lowSeverityCount);
+
+                return;
+            }
+
+            $.each(tasks, function(index, task) {
+                if (task.status === 'pending') {
+                    pendingCount++;
+                } else if (task.status.toLowerCase() === 'completed') {
+                    completedCount++;
+                    var createdDate = new Date(task.createdAt);
+                    var month = createdDate.getMonth();
+                    monthlyCompletedCount[month]++;
+                }
+
+                if (task.severity.toLowerCase() === 'high' && task.status.toLowerCase() !== 'completed') {
+                    highSeverityCount++;
+                } else if (task.severity.toLowerCase() === 'medium' && task.status.toLowerCase() !== 'completed') {
+                    mediumSeverityCount++;
+                } else if (task.severity.toLowerCase() === 'low' && task.status.toLowerCase() !== 'completed') {
+                    lowSeverityCount++;
+                }
+            });
+
+            // Update the text content of each count element
+            $('#pending-count').text(pendingCount);
+            $('#completed-count').text(completedCount);
+            $('#total-count').text(tasks.length);
+            $('#high-severity-count').text(highSeverityCount);
+            $('#medium-severity-count').text(mediumSeverityCount);
+            $('#low-severity-count').text(lowSeverityCount);
+
+            // Render charts with updated data
+            renderMonthlyCompletedChart(monthlyCompletedCount);
+           
+            renderSeverityChart(highSeverityCount, mediumSeverityCount, lowSeverityCount);
+        }
+
+
+        function getSeverityClass(severity) {
+            switch (severity) {
+                case 'high':
+                    return 'severity-high';
+                case 'medium':
+                    return 'severity-medium';
+                case 'low':
+                    return 'severity-low';
+                default:
+                    return '';
+            }
+        }
+
+        function renderMonthlyCompletedChart(monthlyData) {
+            var ctx = document.getElementById('monthlyCompletedChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Completed Tickets',
+                        data: monthlyData,
+                        backgroundColor: 'rgba(95, 158, 160)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+
+        function renderSeverityChart(high, medium, low) {
+            var ctx = document.getElementById('severityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['High', 'Medium', 'Low'],
+                    datasets: [{
+                        label: 'Severity',
+                        data: [high, medium, low],
+                        backgroundColor: [
+                            'rgba(199, 0, 57)', 
+                            'rgba(225, 193, 110)', 
+                            'rgba(115, 147, 179)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(54, 162, 235, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                    }
+                }
+            });
+        }
+        
+
+       
+
+        
+
+        getTaskDetails();
+    });
+
+
+
+       </script>
+<div class="preloader" id="preloader"></div>
+    <div class="wrapper">
+        <jsp:include page="sidebar.jsp"></jsp:include>      
+        
+        <div class="main">
+            <jsp:include page="nav.jsp"></jsp:include>
+            <main class="content">
+            
+                <div class="container-fluid p-0">
+    <!-- Top Boxes -->                  
+    <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card" onclick="openCompletedTasksPopup()">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 id="completed-count" class="mb-2"></h3>
+                            <p class="mb-0">Completed</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fa fa-check-circle text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="#ongoing">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h3 id="pending-count" class="mb-2"></h3>
+                                <p class="mb-0">Pending Tasks</p>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <i class="fa fa-hourglass-half text-warning fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <a href="task.jsp">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h3 id="total-count" class="mb-2"></h3>
+                                <p class="mb-0">Total Tasks</p>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <i class="fa fa-tasks text-info fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>                      
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 id="transferred-count" class="mb-2"></h3>
+                            <p class="mb-0">Ticket Transferred</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fa fa-exchange text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>                       
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card" onclick="openHighSeverityTasksPopup()">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 id="high-severity-count" class="mb-2"></h3>
+                            <p class="mb-0">High Severity</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fa fa-exclamation-triangle text-danger fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card" onclick="openMediumSeverityTasksPopup()">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 id="medium-severity-count" class="mb-2"></h3>
+                            <p class="mb-0">Medium Severity</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fa fa-exclamation-circle text-warning fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card" onclick="openLowSeverityTasksPopup()">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 id="low-severity-count" class="mb-2"></h3>
+                            <p class="mb-0">Low Severity</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fa fa-arrow-down text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="col-xl-12 col-xxl-12">
+  <div class="card flex-fill w-100">
+    <div class="card-header">
+      <h5 class="card-title">Task Chart</h5>
+    </div>
+    <div class="card-body">
+      <div class="chart">
+        <canvas id="chartjs-line" ></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  // AJAX request to fetch data
+  $.ajax({
+    url: 'http://localhost:8080/v1/api/t/created',  
+    type: 'GET',
+    dataType: 'json',
+    success: function(data) {
+      if (data && data.tickets) {
+        var tickets = JSON.parse(data.tickets);
+        
+        // Prepare arrays to hold data
+        var months = []; 
+        var completedPerMonth = new Array(12).fill(0);  // Initialize array with zeros for 12 months
+        var pendingPerMonth = new Array(12).fill(0);  
+        var totalPerMonth = new Array(12).fill(0);  
+        
+        // Populate data arrays from API response
+        tickets.forEach(function(ticket) {
+          var monthIndex = new Date(ticket.createdAt).getMonth();  // Get month index (0-11)
+          completedPerMonth[monthIndex] += (ticket.status === 'Completed') ? 1 : 0;
+          pendingPerMonth[monthIndex] += (ticket.status !== 'Completed') ? 1 : 0;
+          totalPerMonth[monthIndex]++;  // Increment total tickets for the month
+        });
+
+        // Now you have arrays filled with data, use Chart.js to render the chart
+        renderChart(months, completedPerMonth, pendingPerMonth, totalPerMonth);
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('Error fetching data:', error);
+      // Handle error scenario
+    }
+  });
+});
+
+function renderChart(months, completedPerMonth, pendingPerMonth, totalPerMonth) {
+  // Create a Chart.js instance for line chart
+  var ctx = document.getElementById('chartjs-line').getContext('2d');
+  var taskChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [{
+        label: 'Completed Tickets',
+        data: completedPerMonth,
+        fill: true,
+        backgroundColor:'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 2
+      }, {
+        label: 'Pending Tickets',
+        data: pendingPerMonth,
+        fill: true,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 2
+      }, {
+        label: 'Total Tickets',
+        data: totalPerMonth,
+        fill: true,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true
+        },
+        y: {
+          stacked: true
+        }
+      }
+    }
+  });
+}
+</script>
+
+
+
+                
+                    <!-- Logs Created by the User -->                                           
+              <div class="row">
+    <div class="col-lg-6 mb-3">
+        <div class="card card-equal-height">
+            <div class="chart-container">
+                <h6 class="card-title">Completed Tickets Per Month</h6>
+                <canvas id="monthlyCompletedChart" class="chart-container"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <div class="card card-equal-height">
+            <div class="chart-container">
+                <h6 class="card-title">Pending Tickets</h6>
+                <canvas id="severityChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+              
+              
+             
+                <%-- Pending Tickets Table --%>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title"> TASKS ASSIGNED BY ME</h5>
+                </div>
+                <div class="card-body" id="assignedTasks">
+                    <div class="table-responsive">
+                        <table id="taskTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="d-none d-xl-table-cell">Task Id</th>
+                                    <th>Task Name</th>
+                                    <th>Severity</th>
+                                    <th class="d-none d-md-table-cell">Assigned By</th>
+                                    <th class="d-none d-md-table-cell">Assigned To</th>
+                                    <th class="d-none d-md-table-cell">Assigned Date</th>
+                                    <th class="d-none d-md-table-cell">Due Date</th>
+                                    
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+     <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">TASKS Assigned to me</h5>
+                </div>
+                <div class="card-body" id="tasksFromApi">
+                    <div class="table-responsive">
+                        <table id="taskTableApi"  data-toggle="collapse" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Task Id</th>
+                                    <th>Task Name</th>
+                                    <th>Status</th>
+                                    <th>Severity</th>
+                                    <th>Created By</th>
+                                    <th>Due Date </th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+</div>
+
+
+
+           
+            <jsp:include page="footer.jsp"></jsp:include>
+       
+                 
+<!-- The Modal -->
+<div id="ticketModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form method="post" action="ticketAction">
+      <input type="hidden" name="ticketId" id="ticketId">
+      <div class="form-group mb-3">
+        <label for="action" class="form-label">Action</label>
+        <select name="action" id="action" class="form-select" onchange="handleActionChange()">
+          <option value="completed">Mark as Completed</option>
+        </select>
+      </div>
+      
+      <div class="form-group mb-3">
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea name="remarks" id="remarks" class="form-control"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+ <!-- Completed Tasks Modal -->
+<div id="completedTasksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeCompletedTasksPopup()">&times;</span>
+        <h2>Last 10 Completed Tasks</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Task Name</th>
+                    <th>Severity</th>
+                    <th>Assigned To</th>
+                    <th>Completed At</th>
+                    <th>Due Date</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5" class="text-center">No ongoing tasks</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="modal-footer">
+            For further details, go to <a href="task.jsp">tasks</a>
+        </div>
+    </div>
+</div>
+
+<!-- High Severity Tasks Modal -->
+<div id="highSeverityTasksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeSeverityTasksPopup('high')">&times;</span>
+        <h2>High Severity Tasks</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Task Name</th>
+                    <th>Created at </th>
+                    <th>Assigned to</th>
+                    <th>Due Date</th>
+                    <th>Manager</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5" class="text-center">
+            </tbody>
+        </table>
+        <div class="modal-footer">
+            For further details, go to <a href="task.jsp">tasks</a>
+        </div>
+    </div>
+</div>
+
+<!-- Medium Severity Tasks Modal -->
+<div id="mediumSeverityTasksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeSeverityTasksPopup('medium')">&times;</span>
+        <h2>Medium Severity Tasks</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Task Name</th>
+                    <th>Created at </th>
+                    <th>Assigned to</th>
+                    <th>Due Date</th>
+                    <th>Manager</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5" class="text-center">No ongoing tasks</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="modal-footer">
+            For further details, go to <a href="task.jsp">tasks</a>
+        </div>
+    </div>
+</div>
+
+<!-- Low Severity Tasks Modal -->
+<div id="lowSeverityTasksModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeSeverityTasksPopup('low')">&times;</span>
+        <h2>Low Severity Tasks</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Task Name</th>
+                    <th>Created at </th>
+                    <th>Assigned to</th>
+                    <th>Due Date</th>
+                    <th>Manager</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5" class="text-center">No ongoing tasks</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="modal-footer">
+            For further details, go to <a href="task.jsp">tasks</a>
+        </div>
+    </div>
+</div>
+ <script>
+ $(document).ready(function() {
+	    getTaskDetails();
+	});
+
+	function getTaskDetails() {
+	    $.ajax({
+	        url: 'http://localhost:8080/v1/api/t/created',
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(response) {
+	            if (response.status === "success") {
+	                var allTasks = JSON.parse(response.tickets);
+	                populateCompletedTasks(allTasks);
+	                populateSeverityTasks(allTasks, 'high');
+	                populateSeverityTasks(allTasks, 'medium');
+	                populateSeverityTasks(allTasks, 'low');
+	                updateCounts(allTasks);
+	            } else {
+	                alert(response.message);
+	            }
+	        },
+	        error: function() {
+	            alert('Error retrieving task details');
+	        }
+	    });
+	}
+
+	function populateCompletedTasks(tasks) {
+	    var tbody = $('#completedTasksModal tbody');
+	    tbody.empty();
+
+	    var completedTasks = tasks.filter(function(task) {
+	        return task.status.toLowerCase() === 'completed';
+	    }).slice(0, 10);
+
+	    if (completedTasks.length === 0) {
+	        tbody.append('<tr><td colspan="5" class="text-center">No completed tasks found</td></tr>');
+	    } else {
+	        $.each(completedTasks, function(index, task) {
+	            var row = '<tr>' +
+	                '<td>' + task.ticketId + '</td>' +
+	                '<td>' + task.title + '</td>' +
+	                '<td>' + task.severity + '</td>' +
+	                '<td>' + task.assignee + '</td>' +
+	                '<td>' + task.DueDate + '</td>' +
+	                '<td>' + task.CompletedAt + '</td>' +
+	                '<td>' + task.Remark + '</td>' +
+	                '</tr>';
+	            tbody.append(row);
+	        });
+	    }
+	}
+
+	function populateSeverityTasks(tasks, severity) {
+	    var tbody = $('#' + severity + 'SeverityTasksModal tbody');
+	    tbody.empty();
+
+	    var severityTasks = tasks.filter(function(task) {
+	        return task.severity.toLowerCase() === severity && task.status.toLowerCase() !== 'completed';
+	    });
+
+	    if (severityTasks.length === 0) {
+	        tbody.append('<tr><td colspan="5" class="text-center">No ' + severity + ' severity tasks found</td></tr>');
+	    } else {
+	        $.each(severityTasks, function(index, task) {
+	            var row = '<tr>' +
+	                '<td>' + task.ticketId + '</td>' +
+	                '<td>' + task.title + '</td>' +
+	                '<td>' + task.createdAt + '</td>' +
+	                '<td>' + task.assignee + '</td>' +
+	                '<td>' + task.DueDate + '</td>' +
+	                '<td>' + task.Manager + '</td>' +
+	                '</tr>';
+	            tbody.append(row);
+	        });
+	    }
+	}
+
+	function closeCompletedTasksPopup() {
+	    $('#completedTasksModal').hide();
+	}
+
+	function closeSeverityTasksPopup(severity) {
+	    $('#' + severity + 'SeverityTasksModal').hide();
+	}
+
+	function openModal(modalId) {
+	    $('#' + modalId).show();
+	}
+
+	function updateCounts(tasks) {
+	    var pendingCount = 0;
+	    var completedCount = 0;
+	    var highSeverityCount = 0;
+	    var mediumSeverityCount = 0;
+	    var lowSeverityCount = 0;
+
+	    var monthlyCompletedCount = Array(12).fill(0);
+
+	    $.each(tasks, function(index, task) {
+	        if (task.status.toLowerCase() === 'pending') {
+	            pendingCount++;
+	        } else if (task.status.toLowerCase() === 'completed') {
+	            completedCount++;
+	            var createdDate = new Date(task.created_at);
+	            var month = createdDate.getMonth();
+	            monthlyCompletedCount[month]++;
+	        }
+
+	        if (task.severity.toLowerCase() === 'high' && task.status.toLowerCase() !== 'completed') {
+	            highSeverityCount++;
+	        } else if (task.severity.toLowerCase() === 'medium' && task.status.toLowerCase() !== 'completed') {
+	            mediumSeverityCount++;
+	        } else if (task.severity.toLowerCase() === 'low' && task.status.toLowerCase() !== 'completed') {
+	            lowSeverityCount++;
+	        }
+	    });
+
+	    $('#pending-count').text(pendingCount);
+	    $('#completed-count').text(completedCount);
+	    $('#total-count').text(tasks.length);
+	    $('#high-severity-count').text(highSeverityCount);
+	    $('#medium-severity-count').text(mediumSeverityCount);
+	    $('#low-severity-count').text(lowSeverityCount);
+
+	    renderMonthlyCompletedChart(monthlyCompletedCount);
+	   
+	    
+	    renderSeverityChart(highSeverityCount, mediumSeverityCount, lowSeverityCount);
+	}
+
+ </script>
+
+<script>
+
+function closeSeverityTasksPopup(severity) {
+    var modal = document.getElementById(severity + "SeverityTasksModal");
+    modal.style.display = "none";
+}
+
+// Function to open the Medium Severity Tasks popup
+function openMediumSeverityTasksPopup() {
+    var modal = document.getElementById("mediumSeverityTasksModal");
+    modal.style.display = "block";
+}
+</script>
+
+<script src="./assets/js/ed.js"></script>
+    <script src="./assets/js/app.js"></script>
 </body>
-
 </html>

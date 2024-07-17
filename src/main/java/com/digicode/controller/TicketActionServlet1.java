@@ -1,6 +1,6 @@
 package com.digicode.controller;
 
-import com.digicode.model.TicketLogs;
+
 import com.digicode.model.TicketsModel;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -63,11 +63,11 @@ public class TicketActionServlet1 extends HttpServlet {
                 if ("completed".equalsIgnoreCase(action)) {
                     handleCompleteAction(ticket, remarks);
                 } else if ("transfer".equalsIgnoreCase(action)) {
-                    handleTransferAction(session, req, ticket, transferTo, remarks);
+                    
                 }
                 session.update(ticket);
                 transaction.commit();
-                resp.sendRedirect(req.getContextPath() + "/employee_dashboard.jsp");
+                resp.sendRedirect(req.getContextPath() + "/ed.jsp");
             } else {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Ticket not found");
             }
@@ -89,23 +89,7 @@ public class TicketActionServlet1 extends HttpServlet {
         ticket.setCompletedAt(currentDate);
     }
 
-    private void handleTransferAction(Session session, HttpServletRequest req, TicketsModel ticket, String transferTo, String remarks) {
-        String previousAssignee = ticket.getAssignee();
-        ticket.setAssignee(transferTo);
-        ticket.setRemark(remarks);
-        ticket.setCheckRead(false);
-
-        TicketLogs log = new TicketLogs();
-        log.setLogData("Ticket transferred from " + previousAssignee + " to " + transferTo);
-        log.setLogDate(new Date());
-        log.setCreatedBy(previousAssignee);
-        log.setAssignee(transferTo);
-        log.setTicket(ticket);
-        session.save(log);
-
-        int transferredCount = countTransfersByUser(session, previousAssignee);
-        req.getSession().setAttribute("transferredCount", transferredCount);
-    }
+   
 
     @Override
     public void destroy() {
@@ -115,15 +99,5 @@ public class TicketActionServlet1 extends HttpServlet {
         }
     }
 
-    private int countTransfersByUser(Session session, String assignee) {
-        try {
-            Long count = (Long) session.createQuery("select count(*) from TicketLogs where createdBy = :assignee")
-                    .setParameter("assignee", assignee)
-                    .uniqueResult();
-            return count != null ? count.intValue() : 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
+  
 }

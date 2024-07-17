@@ -1,9 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<%@ page import="com.digicode.dao.LoginServiceImpl"%>
-<%@ page import="com.digicode.model.EmployeeModel"%>
-<%@ page import="javax.servlet.http.Cookie"%>
-<%@ page import="javax.servlet.http.HttpServletRequest"%>
 
 
 <!DOCTYPE html>

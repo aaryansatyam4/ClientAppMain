@@ -13,7 +13,7 @@ public class TaskSubgroupModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String subgroupName;
@@ -24,7 +24,7 @@ public class TaskSubgroupModel implements Serializable {
     private TasksGroupModel parentGroup;
 
     @OneToMany(mappedBy = "taskSubgroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TicketsModel> tickets = new HashSet<>();
+    private Set<TaskModel> task = new HashSet<>();
 
     // Getters and Setters
 
@@ -54,13 +54,21 @@ public class TaskSubgroupModel implements Serializable {
         this.parentGroup = parentGroup;
     }
 
-    public Set<TicketsModel> getTickets() {
-        return tickets;
+    public Set<TaskModel> getTasks() {
+        return task;
     }
 
-    public void setTickets(Set<TicketsModel> tickets) {
-        this.tickets = tickets;
+    public void setTickets(Set<TaskModel> tasks) {
+        this.task = tasks;
     }
 
-    
+    public void addTicket(TaskModel tasks) {
+        task.add(tasks);
+        tasks.setTaskSubgroup(this);
+    }
+
+    public void removeTicket(TaskModel tasks) {
+        task.remove(tasks);
+        tasks.setTaskSubgroup(null);
+    }
 }

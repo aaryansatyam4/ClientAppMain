@@ -1,10 +1,11 @@
 package com.digicode.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "tickets")
@@ -14,7 +15,6 @@ public class TicketsModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     @Column(name = "ticket_name")
@@ -34,9 +34,6 @@ public class TicketsModel implements Serializable {
 
     @Column(name = "updated_at")
     private Date updatedAt;
-
-    @Column(name = "assignee")
-    private String assignee;
 
     @Column(name = "severity")
     private String severity;
@@ -63,19 +60,36 @@ public class TicketsModel implements Serializable {
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TicketLogs> ticketLogs = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subgroup_id")
-    private TaskSubgroupModel taskSubgroup;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id")
-    private EmployeeModel employee;
 
-    // Constructors
-    public TicketsModel() {
-    }
+   
+    
+    public List<TicketLogs> getTicketLogs() {
+		return ticketLogs;
+	}
+
+	public void setTicketLogs(List<TicketLogs> ticketLogs) {
+		this.ticketLogs = ticketLogs;
+	}
+
+	public EmployeeModel getEmployeeId() {
+		return userId;
+	}
+
+	public void setEmployeeId(EmployeeModel userId) {
+		this.userId = userId;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    private EmployeeModel userId;
+
 
     // Getters and Setters
+    
     public int getId() {
         return id;
     }
@@ -132,13 +146,7 @@ public class TicketsModel implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public String getAssignee() {
-        return assignee;
-    }
-
-    public void setAssignee(String assignee) {
-        this.assignee = assignee;
-    }
+  
 
     public String getSeverity() {
         return severity;
@@ -171,7 +179,7 @@ public class TicketsModel implements Serializable {
     public void setManager(String manager) {
         this.manager = manager;
     }
-
+    
     public Date getDueDate() {
         return dueDate;
     }
@@ -195,21 +203,14 @@ public class TicketsModel implements Serializable {
     public void setCheckRead(Boolean checkRead) {
         this.checkRead = checkRead;
     }
-
-    public List<TicketLogs> getTicketLogs() {
+    
+    public List<TicketLogs> getTicketLogList() {
         return ticketLogs;
     }
 
-    public void setTicketLogs(List<TicketLogs> ticketLogs) {
-        this.ticketLogs = ticketLogs;
+    public void setTicketLogList(List<TicketLogs> ticketLogList) {
+        this.ticketLogs = ticketLogList;
     }
 
-    public TaskSubgroupModel getTaskSubgroup() {
-        return taskSubgroup;
-    }
-
-    public void setTaskSubgroup(TaskSubgroupModel taskSubgroup) {
-        this.taskSubgroup = taskSubgroup;
-    }
+   
 }
-
