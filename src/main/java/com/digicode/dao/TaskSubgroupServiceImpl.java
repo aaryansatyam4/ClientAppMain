@@ -5,7 +5,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
 import com.digicode.model.TaskSubgroupModel;
+import com.digicode.model.TasksGroupModel;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -36,8 +38,33 @@ public class TaskSubgroupServiceImpl {
         Gson gson = new Gson();
         return gson.toJson(subgroups);
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<TaskSubgroupModel> getSubgroupsByParentGroupId(int parentGroupId) {
+        List<TaskSubgroupModel> subgroups = null;
+        TasksGroupModel tm = new TasksGroupModel();
+        tm.setId(parentGroupId); 
+        //gh
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            
+            
+            subgroups = session.createQuery("FROM TaskSubgroupModel WHERE parent_id = :parentGroupId")
+                               .setParameter("parentGroupId", tm)
+                               .list();
+            
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return subgroups;
+    }
 
-    // Get task subgroup by ID
+
     @SuppressWarnings("unchecked")
 	public String searchTaskSubgroups(String searchText) {
         List<TaskSubgroupModel> subgroups = null;

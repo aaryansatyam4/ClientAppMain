@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+ 
 
 
 <!DOCTYPE html>
@@ -77,6 +77,9 @@
     </style>
 
 <body>
+
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         // JavaScript to hide the preloader after a delay
         document.addEventListener("DOMContentLoaded", function() {
@@ -88,7 +91,7 @@
             }, 1500);
         });
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
     <script>
     $(document).ready(function() {
         var allAssignedTasks = [];
@@ -501,7 +504,7 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 <div class="col-xl-12 col-xxl-12">
   <div class="card flex-fill w-100">
@@ -620,76 +623,91 @@ function renderChart(months, completedPerMonth, pendingPerMonth, totalPerMonth) 
     </div>
 </div>
               
-              
+         <!-- Bootstrap CSS -->
+       
              
-                <%-- Pending Tickets Table --%>
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title"> TASKS ASSIGNED BY ME</h5>
+                    <h5 class="card-title">TASKS ASSIGNED BY ME</h5>
+                    <button class="btn btn-link float-right" type="button" data-toggle="collapse" data-target="#collapseAssigned" aria-expanded="true" aria-controls="collapseAssigned">
+                        Expand/Collapse
+                    </button>
                 </div>
-                <div class="card-body" id="assignedTasks">
-                    <div class="table-responsive">
-                        <table id="taskTable" class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="d-none d-xl-table-cell">Task Id</th>
-                                    <th>Task Name</th>
-                                    <th>Severity</th>
-                                    <th class="d-none d-md-table-cell">Assigned By</th>
-                                    <th class="d-none d-md-table-cell">Assigned To</th>
-                                    <th class="d-none d-md-table-cell">Assigned Date</th>
-                                    <th class="d-none d-md-table-cell">Due Date</th>
-                                    
-
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="8" class="text-center">Loading...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div id="collapseAssigned" class="collapse"> <!-- Initially collapsed -->
+                    <div class="card-body" id="assignedTasks">
+                        <div class="table-responsive">
+                            <table id="taskTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="d-none d-xl-table-cell">Task Id</th>
+                                        <th>Task Name</th>
+                                        <th>Severity</th>
+                                        <th class="d-none d-md-table-cell">Assigned By</th>
+                                        <th class="d-none d-md-table-cell">Assigned To</th>
+                                        <th class="d-none d-md-table-cell">Assigned Date</th>
+                                        <th class="d-none d-md-table-cell">Due Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>
 </div>
 
 
-     <div class="col">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">TASKS Assigned to me</h5>
+
+  <div class="col">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">TASKS Assigned to me</h5>
+            <button class="btn btn-link float-right" type="button" data-toggle="collapse" data-target="#collapseTasksApi" aria-expanded="true" aria-controls="collapseTasksApi">
+                Expand/Collapse
+            </button>
+        </div>
+        <div id="collapseTasksApi" class="collapse">
+            <div class="card-body" id="tasksFromApi">
+                <div class="table-responsive">
+                    <table id="taskTableApi" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Task Id</th>
+                                <th>Task Name</th>
+                                <th>Status</th>
+                                <th>Severity</th>
+                                <th>Created By</th>
+                                <th>Due Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="taskTableBodyApi">
+                            <tr>
+                                <td colspan="7" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card-body" id="tasksFromApi">
-                    <div class="table-responsive">
-                        <table id="taskTableApi"  data-toggle="collapse" class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Task Id</th>
-                                    <th>Task Name</th>
-                                    <th>Status</th>
-                                    <th>Severity</th>
-                                    <th>Created By</th>
-                                    <th>Due Date </th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="6" class="text-center">Loading...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center" id="paginationApi">
+                        <!-- Pagination links will be dynamically added here -->
+                    </ul>
+                </nav>
             </div>
         </div>
+    </div>
+</div>
+  
+  
     </div>
   
 </div>
@@ -832,7 +850,21 @@ function renderChart(months, completedPerMonth, pendingPerMonth, totalPerMonth) 
         </div>
     </div>
 </div>
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<!-- jQuery and Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-qjjWuCx8VIAIZCE8BquBz3qZTXixuw1Lu94Ipvh45Feh9zrn6pI97BgoLcp7//L" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="./assets/js/ed.js"></script>
+    <script src="./assets/js/app.js"></script>
+       
  <script>
+ 
+
+ 
  $(document).ready(function() {
 	    getTaskDetails();
 	});
@@ -980,7 +1012,5 @@ function openMediumSeverityTasksPopup() {
 }
 </script>
 
-<script src="./assets/js/ed.js"></script>
-    <script src="./assets/js/app.js"></script>
 </body>
 </html>

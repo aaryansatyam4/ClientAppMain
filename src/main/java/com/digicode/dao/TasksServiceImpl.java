@@ -9,6 +9,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 
 import com.digicode.model.TaskModel;
+import com.digicode.model.TaskSubgroupModel;
+
 import com.google.gson.Gson;
 
 import javax.servlet.http.Cookie;
@@ -86,6 +88,34 @@ public class TasksServiceImpl {
         
         
     }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<TaskModel> getTaskByParentGroupId(int parentGroupId) {
+        List<TaskModel> subgroups = null;
+        TaskSubgroupModel tm = new TaskSubgroupModel();
+        tm.setId(parentGroupId); 
+        //gh
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            
+            
+            subgroups = session.createQuery("FROM TaskModel WHERE subgroup_id = :parentGroupId")
+                               .setParameter("parentGroupId", tm)
+                               .list();
+            
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return subgroups;
+    }
+    
+    
     
     //add task
     public String addTask(TaskModel task) {

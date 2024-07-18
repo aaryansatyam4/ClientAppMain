@@ -135,7 +135,7 @@ public class EmployeeServiceImpl {
             EmployeeModel existingEmployee = (EmployeeModel) session.get(EmployeeModel.class, userId);
 
             if (existingEmployee != null) {
-                // Update fields only if they are not null
+                // Update fields only if are not null
                 if (employee.getFirstName() != null) existingEmployee.setFirstName(employee.getFirstName());
                 if (employee.getLastName() != null) existingEmployee.setLastName(employee.getLastName());
                 if (employee.getEmail() != null) existingEmployee.setEmail(employee.getEmail());

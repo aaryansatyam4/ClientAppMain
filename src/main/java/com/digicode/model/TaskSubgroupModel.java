@@ -19,7 +19,7 @@ public class TaskSubgroupModel implements Serializable {
     private String subgroupName;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
     private TasksGroupModel parentGroup;
 

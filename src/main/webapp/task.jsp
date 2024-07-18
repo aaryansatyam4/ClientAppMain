@@ -97,8 +97,8 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <strong class="h3 mb-3">Tasks</strong>
-                                   <button type="button" class="btn btn-link float-end" id="openAddTaskModal">Add New Task</button>
+                                    <strong class="h3 mb-3">Tasks Assigned To Me</strong>
+                         
                                 </div>
                                 <div class="card-body">
                                     <table id="ticketTable" class="display" style="width:100%">
@@ -181,18 +181,108 @@
                             <th>Completed At</th>
                             <td id="modalCompletedAt"></td>
                         </tr>
-                        <tr>
-                            <th>Manager</th>
-                            <td id="modalManager"></td>
-                        </tr>
-                    </table>
+                       <tr>
+                        <th>Action</th>
+                        <td><button class="btn btn-primary" onclick="openModal()">Action</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+<script>
+  // Function to open the ticket modal
+  function openTicketModal(ticketId) {
+    // Set the ticketId in the hidden input field
+    document.getElementById('ticketId').value = ticketId;
+
+    // Show the modal by setting its display property to 'block'
+    document.getElementById('ticketModal').style.display = 'block';
+  }
+
+  // Function to handle changes in the action select (if needed)
+  function handleActionChange() {
+    // Add logic here if you need to handle changes in the action select
+  }
+
+  // Close the ticket modal when the close button (×) is clicked
+  const closeButtons = document.getElementsByClassName('close');
+  for (let i = 0; i < closeButtons.length; i++) {
+    closeButtons[i].addEventListener('click', function() {
+      document.getElementById('ticketModal').style.display = 'none';
+    });
+  }
+
+  // Close the ticket modal if the user clicks outside of it
+  window.addEventListener('click', function(event) {
+    const ticketModal = document.getElementById('ticketModal');
+    if (event.target === ticketModal) {
+      ticketModal.style.display = 'none';
+    }
+  });
+</script>
+
+
+
+<div id="ticketModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form id="ticketForm" method="post" action="ticketAction">
+      <input type="hidden" name="ticketId" id="ticketId">
+      <div class="form-group mb-3">
+        <label for="action" class="form-label">Action</label>
+        <select name="action" id="action" class="form-select" onchange="handleActionChange()">
+          <option value="completed">Mark as Completed</option>
+          <!-- Add more options as needed -->
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="remarks" class="form-label">Remarks</label>
+        <textarea name="remarks" id="remarks" class="form-control"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+
+        <!-- Add New Task Modal -->
+        <div id="addTaskModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add New Task</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="addTaskForm">
+                        <div class="form-group">
+                            <label for="ticket_name">Ticket Name</label>
+                            <input type="text" id="ticket_name" name="ticket_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticket_description">Ticket Description</label>
+                            <input type="text" id="ticket_description" name="ticket_description" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="severity">Severity</label>
+                            <select id="severity" name="severity" required>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="due_date">Due Date</label>
+                            <input type="date" id="due_date" name="due_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employee_id">Assignee (Employee ID)</label>
+                            <input type="text" id="employee_id" name="employee_id" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Task</button>
+                    </form>
                 </div>
             </div>
-            
-            
-            
-              <!-- Add New Task Modal -->
-            <div id="addTaskModal" class="modal">
+        </div>
+        
+  <div id="addTaskModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2>Add New Task</h2>

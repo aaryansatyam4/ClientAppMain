@@ -109,4 +109,39 @@ LoginServiceImpl loginImpl = new LoginServiceImpl();
 		//return "done";
 
 	}
+	
+	
+	@GET
+	@Path("/user/role")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getUserRole(@Context HttpServletRequest request) {
+	    JSONObject responseJSON = new JSONObject();
+	    
+	    Cookie[] cookies = request.getCookies();
+	    String userName = null;
+	    for (Cookie cookie : cookies) {
+	        if (cookie.getName().equals("user")) {
+	            userName = cookie.getValue();
+	            break;
+	        }
+	    }
+	    
+	    if (userName != null) {
+	        LoginServiceImpl loginService = new LoginServiceImpl();
+	        EmployeeModel user = loginService.getUserById(userName);
+	        if (user != null) {
+	            responseJSON.put("status", "success");
+	            responseJSON.put("role", user.getPosition());
+	        } else {
+	            responseJSON.put("status", "failure");
+	            responseJSON.put("message", "User not found");
+	        }
+	    } else {
+	        responseJSON.put("status", "failure");
+	        responseJSON.put("message", "No user cookie found");
+	    }
+
+	    return responseJSON.toString();
+	}
+
 }

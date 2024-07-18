@@ -23,7 +23,7 @@
                     <span class="align-middle">Departments</span>
                 </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item nav-link nav-link-collapse">
                 <a class="sidebar-link" href="task.jsp">
                     <i class="align-middle" data-feather="user-plus"></i>
                     <span class="align-middle">Tasks</span>
@@ -35,31 +35,25 @@
                     <span class="align-middle">Profile</span>
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="admins.jsp">
+            <li class="sidebar-item dropdown">
+                <a class="sidebar-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                     <i class="align-middle" data-feather="user"></i>
                     <span class="align-middle">Admins</span>
                 </a>
-            </li>
-            <li class="sidebar-item">
-                <a data-bs-target="#tickets-submenu" data-bs-toggle="collapse" class="sidebar-link collapsed">
-                    <i class="align-middle" data-feather="log-in"></i>
-                    <span class="align-middle">Tickets</span>
-                </a>
-                <ul id="tickets-submenu" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="AddTicketGroup.jsp">
-                            <i class="align-middle" data-feather="plus-square"></i>
-                            <span class="align-middle">New Ticket</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="list_tickets.jsp">
-                            <i class="align-middle" data-feather="file-text"></i>
-                            <span class="align-middle">List Tickets</span>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="profile.jsp">
+                            <i class="align-middle" data-feather="grid"></i>
+                            <span class="align-middle">Profile</span>
                         </a>
                     </li>
                 </ul>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="newTask.jsp">
+                    <i class="align-middle" data-feather="log-in"></i>
+                    <span class="align-middle">New Tickets</span>
+                </a>
             </li>
         </ul>
     </div>
@@ -69,34 +63,50 @@
     document.addEventListener('DOMContentLoaded', function() {
         const sidebarLinks = document.querySelectorAll('.sidebar-link');
         const currentUrl = window.location.href;
-        const userRole = getCookie('role');
 
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
+        fetch('http://localhost:8080/v1/api/login/user/role', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const userRole = data.role;
 
-        const allSidebarItems = document.querySelectorAll('.sidebar-item');
-        allSidebarItems.forEach(item => item.style.display = 'none');
+                // Hide all sidebar items initially
+                const allSidebarItems = document.querySelectorAll('.sidebar-item');
+                allSidebarItems.forEach(item => item.style.display = 'none');
 
-        if (userRole === 'superadmin') {
-            allSidebarItems.forEach(item => item.style.display = 'block');
-        } else if (userRole === 'admin' || userRole ==='Admin') {
-            document.querySelector('.sidebar-link[href="employee.jsp"]').parentElement.style.display = 'block';
-            document.querySelector('.sidebar-link[href="task.jsp"]').parentElement.style.display = 'block';
-            document.querySelector('.sidebar-link[href="profile.jsp"]').parentElement.style.display = 'block';
-            document.querySelector('.sidebar-link[data-bs-target="#tickets-submenu"]').parentElement.style.display = 'block';
-        } else {
-            document.querySelector('.sidebar-link[href="admin.jsp"]').parentElement.style.display = 'block';
-            document.querySelector('.sidebar-link[href="task.jsp"]').parentElement.style.display = 'block';
-            document.querySelector('.sidebar-link[href="profile.jsp"]').parentElement.style.display = 'block';
-        }
+                // Show items based on user role
+                if (userRole === 'super_admin') {
+                    allSidebarItems.forEach(item => item.style.display = 'block');
+                } else if (userRole === 'admin' || userRole === 'Admin') {
+                    document.querySelector('.sidebar-link[href="admin.jsp"]').parentElement.style.display = 'block';
+                    document.querySelector('.sidebar-link[href="employee.jsp"]').parentElement.style.display = 'block';
+                    document.querySelector('.sidebar-link[href="task.jsp"]').parentElement.style.display = 'block';
+                    document.querySelector('.sidebar-link[href="profile.jsp"]').parentElement.style.display = 'block';
+                    document.querySelector('.sidebar-link[href="newTask.jsp"]').parentElement.style.display = 'block';
+                } else {
+                    // Handle other roles or defaults here
+                    document.querySelector('.sidebar-link[href="admin.jsp"]').parentElement.style.display = 'block';
+                    document.querySelector('.sidebar-link[href="task.jsp"]').parentElement.style.display = 'block';
+                    document.querySelector('.sidebar-link[href="#"]').parentElement.style.display = 'block';
+                    document.querySelector('.sidebar-link[href="profile.jsp"]').parentElement.style.display = 'block';
+                }
 
-        sidebarLinks.forEach(link => {
-            if (link.href === currentUrl) {
-                link.parentElement.classList.add('active');
+                // Activate current link in sidebar
+                sidebarLinks.forEach(link => {
+                    if (link.href === currentUrl) {
+                        link.parentElement.classList.add('active');
+                    }
+                });
+            } else {
+                console.error('Failed to fetch user role:', data.message);
             }
-        });
+        })
+        .catch(error => console.error('Error fetching user role:', error));
     });
 </script>

@@ -13,7 +13,7 @@
 
     <link rel="canonical" href="https://demo-basic.adminkit.io/" />
 
-    <title>AdminKit Demo - Bootstrap 5 Admin Template</title>
+    <title>Add New Task</title>
 
     <link href="./assets/css/app.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -96,7 +96,7 @@
                                 <div class="card-body">
                                     <form id="taskFrm">
                                         <div class="form-group">
-                                            <label for="group-dropdown">Ticket Group</label>
+                                            <label for="group-dropdown">Task Group</label>
                                             <select class="form-control" name="groupName" id="group-dropdown" required>
                                                 <option value="">Select Existing or Custom Group Name</option>
                                                 <option value="Custom">Custom</option>
@@ -105,11 +105,18 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="subgroup-dropdown">Ticket Subgroup</label>
+                                            <label for="subgroup-dropdown">Task Subgroup</label>
                                             <select class="form-control" name="subgroupName" id="subgroup-dropdown" required>
                                                 <option value="">Select Existing or Custom Subgroup Name</option>
                                             </select>
                                             <input type="text" class="form-control mt-2" id="subgroup-input" name="subgroupInput" placeholder="Enter Custom Subgroup Name" style="display: none;">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="task-dropdown">Task</label>
+                                            <select class="form-control" name="taskName" id="task-dropdown" required>
+                                                <option value="">Select Existing or Custom Task Name</option>
+                                            </select>
+                                            <input type="text" class="form-control mt-2" id="task-input" name="taskInput" placeholder="Enter Custom Task Name" style="display: none;">
                                         </div>
 
                                         <div class="form-group">
@@ -160,151 +167,125 @@
             <jsp:include page="footer.jsp"></jsp:include>
         </div>
     </div>
-
-    <script src="./assets/js/app.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    
     <script>
-$(document).ready(function() {
-    // Fetch groups, subgroups, and tickets
-    $.ajax({
-        url: 'listTicketGroups',
-        type: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            var groupDropdown = $('#group-dropdown');
-            var subgroupDropdown = $('#subgroup-dropdown');
-            var ticketDropdown = $('#ticket-dropdown');
+    document.addEventListener('DOMContentLoaded', function() {
+        const groupDropdown = document.getElementById('group-dropdown');
+        const subgroupDropdown = document.getElementById('subgroup-dropdown');
 
-            // Populate group dropdown
-            groupDropdown.empty();
-            groupDropdown.append($('<option></option>').attr('value', '').text('Select Existing or Custom Group Name'));
-            groupDropdown.append($('<option></option>').attr('value', 'Custom').text('Custom'));
-            $.each(data, function(index, group) {
-                groupDropdown.append($('<option></option>').attr('value', group.groupName).text(group.groupName));
+       
+        fetch('http://localhost:8080/v1/api/TaskGroup/allGroup')
+            .then(response => response.json())
+            .then(data => {
+                const groups = JSON.parse(data.tickets);
+                groups.forEach(group => {
+                    const option = document.createElement('option');
+                    option.value = group.ticketId; 
+                    option.textContent = group.title;
+                    groupDropdown.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching task groups:', error);
+                alert('Error fetching task groups, check console for details.');
             });
 
-            // Handle group selection
-            groupDropdown.change(function() {
-                var selectedGroup = $(this).val();
-                subgroupDropdown.empty();
-                subgroupDropdown.append($('<option></option>').attr('value', '').text('Select Existing or Custom Subgroup Name'));
-                subgroupDropdown.append($('<option></option>').attr('value', 'Custom').text('Custom'));
+     
+        groupDropdown.addEventListener('change', function() {
+            const parentGroupId = this.value;
 
-                if (selectedGroup === 'Custom') {
-                    $('#group-input').show();
-                    subgroupDropdown.val('Custom');
-                    $('#subgroup-input').show();
-                } else {
-                    $('#group-input').hide();
-                    $('#subgroup-input').hide();
-                    $.each(data, function(index, group) {
-                        if (group.groupName === selectedGroup) {
-                            $.each(group.subgroups, function(index, subgroup) {
-                                subgroupDropdown.append($('<option></option>').attr('value', subgroup.subgroupName).text(subgroup.subgroupName));
-                            });
-                        }
-                    });
-                }
-            });
+            
+            subgroupDropdown.innerHTML = '<option value="">Select Existing or Custom Subgroup Name</option>';
 
-            // Handle subgroup selection
-            subgroupDropdown.change(function() {
-                var selectedSubgroup = $(this).val();
-                ticketDropdown.empty();
-                ticketDropdown.append($('<option></option>').attr('value', '').text('Select Existing Ticket'));
-
-                if (selectedSubgroup === 'Custom') {
-                    $('#subgroup-input').show();
-                } else {
-                    $('#subgroup-input').hide();
-                    $.each(data, function(index, group) {
-                        $.each(group.subgroups, function(index, subgroup) {
-                            if (subgroup.subgroupName === selectedSubgroup) {
-                                $.each(subgroup.tickets, function(index, ticket) {
-                                    ticketDropdown.append($('<option></option>').attr('value', ticket.ticketName).text(ticket.ticketName));
-                                });
-                            }
+            if (parentGroupId) {
+                fetch('http://localhost:8080/v1/api/sub/subgroup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        id: parentGroupId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        data.subgroups.forEach(subgroup => {
+                            const option = document.createElement('option');
+                            option.value = subgroup.id;
+                            option.textContent = subgroup.subgroupName;
+                            subgroupDropdown.appendChild(option);
                         });
-                    });
-                }
-            });
-
-            // Handle ticket selection
-            ticketDropdown.change(function() {
-                $('#ticketDescription').val('');
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error('Error fetching data: ' + error);
-        }
-    });
-
-    $.ajax({
-        url: 'fetchAdmins', // Update to your servlet mapping
-        type: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            var employeeDropdown = $('#employee-dropdown');
-            employeeDropdown.empty();
-            employeeDropdown.append($('<option></option>').attr('value', '').text('Select Admin'));
-            $.each(data, function(index, admin) {
-                employeeDropdown.append($('<option></option>').attr('value', admin.userId).text(admin.userId));
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error('Error fetching admins: ' + error);
-        }
-    });
-
-    // Submit form via Ajax
-    $('#submitForm').click(function(event) {
-        event.preventDefault();
-
-        var formData;
-
-        if ($('#group-dropdown').val() === 'Custom') {
-            formData = {
-                groupName: $('#group-input').val(),
-                subgroupName: $('#subgroup-input').val(),
-                ticketName: $('#ticket-dropdown').val(),
-                ticketDescription: $('#ticketDescription').val(),
-                dueDate: $('#dueDate').val(),
-                severity: $('#severity').val(),
-                assignedTo: $('#employee-dropdown').val()
-            };
-        } else if ($('#subgroup-dropdown').val() === 'Custom') {
-            formData = {
-                groupName: $('#group-dropdown').val(),
-                subgroupName: $('#subgroup-input').val(),
-                ticketName: $('#ticket-dropdown').val(),
-                ticketDescription: $('#ticketDescription').val(),
-                dueDate: $('#dueDate').val(),
-                severity: $('#severity').val(),
-                assignedTo: $('#employee-dropdown').val()
-            };
-        } else {
-            formData = $('#taskFrm').serialize();
-        }
-
-        $.ajax({
-            type: 'POST',
-            url: 'CreateTaskServlet',
-            data: formData,
-            success: function(response) {
-                alert('Task assigned successfully!');
-                $('#taskFrm')[0].reset();
-            },
-            error: function(xhr, status, error) {
-                if (xhr.status === 400) {
-                    alert(xhr.responseText);
-                } else {
-                    alert('Error occurred while assigning task.');
-                }
+                    } else {
+                        console.error('Error fetching subgroups:', data.message);
+                        alert('Error fetching subgroups: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching subgroups:', error);
+                    alert('Error fetching subgroups, check console for details.');
+                });
             }
         });
+        
+        
+
+        
     });
+
+</script>
+
+<script>
+const groupDropdown = document.getElementById('group-dropdown');
+const subgroupDropdown = document.getElementById('subgroup-dropdown');
+
+groupDropdown.addEventListener('change', function() {
+    const parentGroupId = this.value;
+
+    subgroupDropdown.innerHTML = '<option value="">Select Subgroup</option>';
+
+    if (parentGroupId) {
+        fetch('http://localhost:8080/v1/Task/bysubgroup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                id: parentGroupId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                data.subgroups.forEach(subgroup => {
+                    const option = document.createElement('option');
+                    option.value = subgroup.id;
+                    option.textContent = subgroup.taskName;
+                    subgroupDropdown.appendChild(option);
+                });
+            } else {
+                console.error('Error fetching subgroups:', data.message);
+   \             alert('Error fetching subgroups: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching subgroups:', error);
+            alert('Error fetching subgroups, check console for details.');
+        });
+    }
 });
 </script>
 
+
+<script>
+   
+   
+</script>
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </body>
 </html>
